@@ -1,7 +1,6 @@
 # Atomist
 
-Atomist is a toolset for development automation. Get more background on Atomist [here](atomist.md)
-It lets you automate development tasks to a degree that has not been practical before.
+Atomist is a toolset for development automation. It lets you automate development tasks to a degree that has not been practical before.
 
 The toolset includes GraphQL access (query and subscribe) to events important to software development, like commits and builds and deploys; sweet Slack integration; and tools to modify code and make pull requests.
 

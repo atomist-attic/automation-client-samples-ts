@@ -2,13 +2,13 @@ import { CommandHandler, Parameter, Tags } from "@atomist/automation-client/deco
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { ReviewerCommandSupport } from "@atomist/automation-client/operations/review/ReviewerCommandSupport";
-import { clean, ProjectReview } from "@atomist/automation-client/operations/review/ReviewResult";
+import { clean, ProjectReview, ReviewResult } from "@atomist/automation-client/operations/review/ReviewResult";
 import { findMatches } from "@atomist/automation-client/project/util/parseUtils";
 import { ParentStanzaGrammar } from "../../grammars/mavenGrammars";
 
 @CommandHandler("Reviewer that flags old versions of Spring Boot", "review spring boot version")
 @Tags("atomist", "spring")
-export class SpringBootVersionReviewer extends ReviewerCommandSupport<ProjectReview> {
+export class SpringBootVersionReviewer extends ReviewerCommandSupport<ReviewResult<SpringBootProjectReview>, SpringBootProjectReview> {
 
     @Parameter({
         displayName: "Desired Spring Boot version",
@@ -45,7 +45,7 @@ export class SpringBootVersionReviewer extends ReviewerCommandSupport<ProjectRev
                                 ],
                                 version,
                                 desiredVersion,
-                            } as SpringBootProjectReview);
+                            });
                         }
                     }
                     return Promise.resolve(clean(id));

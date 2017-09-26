@@ -11,7 +11,7 @@ import { VersionedArtifact } from "../../grammars/VersionedArtifact";
 
 @CommandHandler("Reviewer that reports the range of versions of an artifact", "version spread")
 @Tags("atomist", "maven", "library")
-export class VersionSpreadReviewer extends ReviewerCommandSupport<VersionReportReview> {
+export class VersionSpreadReviewer extends ReviewerCommandSupport<LibraryCheckReviewResult, VersionReportReview> {
 
     @Parameter({
         displayName: "Maven Group ID",
@@ -65,25 +65,27 @@ export class VersionSpreadReviewer extends ReviewerCommandSupport<VersionReportR
         };
     }
 
-    protected enrich(reviewResult: ReviewResult<VersionReportReview>): void {
+    protected enrich(reviewResult: ReviewResult<VersionReportReview>): LibraryCheckReviewResult {
         // Put in the aggregate version information
         const allVersions = reviewResult.projectReviews
             .map(r => r.version)
             .filter(v => !!v);
-        (reviewResult as any).versions = _.uniq(allVersions);
+        const lrr = reviewResult as LibraryCheckReviewResult;
+        lrr.versions = _.uniq(allVersions);
+        return lrr;
     }
 
 }
 
 export interface LibraryCheckReviewResult extends ReviewResult<VersionReportReview> {
 
-}
-
-export interface VersionReportReview extends ProjectReview, VersionedArtifact {
-
     /**
      * All the versions we found, without duplicates. Look at individual ProjectReviews for
      * the version in each project.
      */
     versions: string[];
+}
+
+export interface VersionReportReview extends ProjectReview, VersionedArtifact {
+
 }

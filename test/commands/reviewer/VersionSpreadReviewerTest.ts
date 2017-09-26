@@ -1,15 +1,15 @@
 import "mocha";
 
+import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 import { RepoId, SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { RepoFinder } from "@atomist/automation-client/operations/common/repoFinder";
 
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import { Project } from "@atomist/automation-client/project/Project";
 import * as assert from "power-assert";
-import { NonSpringPom, springBootPom } from "./Poms";
 import { VersionSpreadReviewer } from "../../../src/commands/reviewer/VersionSpreadReviewer";
-import { Project } from "../../../../automation-client-ts/build/src/project/Project";
 import { dependencyOfGrammar } from "../../../src/grammars/mavenGrammars";
+import { NonSpringPom, springBootPom } from "./Poms";
 
 class TestVersionSpreadReviewer extends VersionSpreadReviewer {
 
@@ -23,10 +23,11 @@ class TestVersionSpreadReviewer extends VersionSpreadReviewer {
         this.rf = ctx => Promise.resolve(repos.map(r => r.repoId));
         this.rl = id => {
             const found = repos.find(repo => repo.repoId === id);
-            if (!found)
-                throw `Cannot find repo`;
+            if (!found) {
+                throw new Error(`Cannot find repo`);
+            }
             return Promise.resolve(found.project);
-        }
+        };
     }
 
     protected repoFinder() {

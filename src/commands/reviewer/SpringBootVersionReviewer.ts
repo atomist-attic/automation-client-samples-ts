@@ -8,7 +8,8 @@ import { ParentStanzaGrammar } from "../../grammars/mavenGrammars";
 
 @CommandHandler("Reviewer that flags old versions of Spring Boot", "review spring boot version")
 @Tags("atomist", "spring")
-export class SpringBootVersionReviewer extends ReviewerCommandSupport<ReviewResult<SpringBootProjectReview>, SpringBootProjectReview> {
+export class SpringBootVersionReviewer
+    extends ReviewerCommandSupport<ReviewResult<SpringBootProjectReview>, SpringBootProjectReview> {
 
     @Parameter({
         displayName: "Desired Spring Boot version",
@@ -45,7 +46,7 @@ export class SpringBootVersionReviewer extends ReviewerCommandSupport<ReviewResu
                                 ],
                                 version,
                                 desiredVersion,
-                            });
+                            } as SpringBootProjectReview);
                         }
                     }
                     return Promise.resolve(clean(id));

@@ -3,6 +3,7 @@ import { UniversalSeed } from "@atomist/automation-client/operations/generate/Un
 import { Project, ProjectNonBlocking } from "@atomist/automation-client/project/Project";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 
+import { MappedParameter, MappedParameters } from "@atomist/automation-client/Handlers";
 import { doWithAtMostOneMatch, doWithUniqueMatch } from "@atomist/automation-client/project/util/parseUtils";
 
 /**
@@ -10,13 +11,7 @@ import { doWithAtMostOneMatch, doWithUniqueMatch } from "@atomist/automation-cli
  */
 export class NewAutomation extends UniversalSeed {
 
-    @Parameter({
-        displayName: "Slack Team ID",
-        description: "team identifier for Slack team associated with this automation",
-        pattern: /^T[0-9A-Z]+$/,
-        validInput: "Slack team identifier of form T0123WXYZ",
-        required: true,
-    })
+    @MappedParameter(MappedParameters.SLACK_TEAM)
     public team: string;
 
     constructor() {

@@ -1,21 +1,23 @@
+import * as _ from "lodash";
+
 import { CommandHandler, Tags } from "@atomist/automation-client/decorators";
-import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
-import { setSpringBootVersionEditor } from "./setSpringBootVersionEditor";
-import { findMatches, Match } from "@atomist/automation-client/project/util/parseUtils";
-import { ArtifactContainer, parentStanzaOfGrammar } from "../../../grammars/mavenGrammars";
-import { HandlerContext } from "@atomist/automation-client/HandlerContext";
-import { SpringBootStarter } from "./springConstants";
-import { LocalOrRemoteRepoOperation } from "@atomist/automation-client/operations/common/LocalOrRemoteRepoOperation";
 import { HandleCommand } from "@atomist/automation-client/HandleCommand";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
+import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { logger } from "@atomist/automation-client/internal/util/logger";
-import {
-    editProjectUsingPullRequest,
-    PullRequestEdit
-} from "@atomist/automation-client/operations/support/editorUtils";
-import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { LocalOrRemoteRepoOperation } from "@atomist/automation-client/operations/common/LocalOrRemoteRepoOperation";
 import { RepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import {
+    createAndPushBranch,
+    editProjectUsingBranch,
+} from "@atomist/automation-client/operations/support/editorUtils";
+import { GitProject } from "@atomist/automation-client/project/git/GitProject";
+import { findMatches, Match } from "@atomist/automation-client/project/util/parseUtils";
+import { ArtifactContainer, parentStanzaOfGrammar } from "../../../grammars/mavenGrammars";
+import { setSpringBootVersionEditor } from "./setSpringBootVersionEditor";
+import { SpringBootStarter } from "./springConstants";
 
 /**
  * Upgrade the version of Spring Boot projects to the latest version
@@ -43,53 +45,27 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
                     reposToEdit.map(id =>
                         this.repoLoader()(id)
                             .then(project => {
-                                return findMatches<ArtifactContainer>(project, "pom.xml", parentStanzaOfGrammar(SpringBootStarter))
+                                return findMatches<ArtifactContainer>(project, "pom.xml",
+                                    parentStanzaOfGrammar(SpringBootStarter))
                                     .then(matches => {
                                         if (matches.length === 1) {
-                                            versions.push(matches[0].version);
-                                            console.log("Found version [%s]", matches[0].gav.version)
-                                            return {id, project, match: matches[0]};
+                                            versions.push(matches[0].gav.version);
+                                            console.log("Found version [%s]", matches[0].gav.version);
+                                            return {id, project: project as GitProject, match: matches[0]};
                                         } else {
                                             return undefined;
                                         }
                                     });
-                            })
+                            }),
                     );
-                return Promise.all(projectPromises).then(ts => ts.filter(t => !!t));
+                return Promise.all(projectPromises)
+                    .then(pp => pp.filter(t => !!t));
             })
-            .then(springBootProjects => {
-                if (springBootProjects.length > 0) {
-                    // TODO this is wrong
-                    const uniqueVersions = _.uniq(versions).sort();
-                    const desiredVersion = _.last(uniqueVersions);
-                    return context.messageClient.respond(
-                        `Spring Boot versions found in org: [${uniqueVersions.join(",")}]\n` +
-                        `Attempting to migrate all projects to ${desiredVersion}`)
-                        .then(_ => {
-                            const editor = setSpringBootVersionEditor(desiredVersion);
-                            const edits = springBootProjects
-                                .filter(p => p.match.version !== desiredVersion)
-                                .map(p => {
-                                        return context.messageClient.respond(
-                                            `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.version}`)
-                                            .then(_ => this.doEdit(context, p, editor));
-                                    }
-                                );
-                            return Promise.all(edits)
-                                .then(x => {
-                                    return {
-                                        code: 0,
-                                    };
-                                });
-                        });
-                } else {
-                    return context.messageClient
-                        .respond("Nothing to do: No Spring Boot projects found in organization")
-                        .then(_ => {
-                            return {code: 0}
-                        });
-                }
-            });
+            .then(springBootProjects =>
+                springBootProjects.length > 0 ?
+                    this.editAll(context, springBootProjects, versions) :
+                    this.nothingToDo(context),
+            );
     }
 
     /**
@@ -99,10 +75,53 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
      * @param {ProjectEditor<any>} editor
      * @return {Promise<any>}
      */
-    protected doEdit(context: HandlerContext, p: ProjectMatch, editor: ProjectEditor<any>) {
-        // TODO should be a branch
-        return editProjectUsingPullRequest(context, p.id, p.project, editor,
-            new PullRequestEdit("branch", "title"));
+    protected doEdit(context: HandlerContext, p: ProjectMatch, editor: ProjectEditor<any>, desiredVersion: string) {
+        return editProjectUsingBranch(context, p.id, p.project, editor,
+            {
+                branch: `atomist-spring-boot-${desiredVersion}`,
+                commitMessage: `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.gav.version}`,
+            },
+        );
+    }
+
+    private editAll(context: HandlerContext, springBootProjects: ProjectMatch[], versions: string[]) {
+        // TODO this is naive: What about milestones etc?
+        const uniqueVersions = _.uniq(versions).sort();
+        const desiredVersion = _.last(uniqueVersions);
+        const editor = setSpringBootVersionEditor(desiredVersion);
+
+        return context.messageClient.respond(
+            `Spring Boot versions found in org: [${uniqueVersions.join(",")}]\n` +
+            `Attempting to migrate all projects to ${desiredVersion}`)
+            .then(r => {
+                const edits = springBootProjects
+                    .filter(p => p.match.gav.version !== desiredVersion)
+                    .map(p => {
+                            return context.messageClient.respond(
+                                `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.gav.version}`)
+                                .then(x =>
+                                    this.doEdit(context, p, editor, desiredVersion));
+                        },
+                    );
+                return Promise.all(edits)
+                    .then(eds => {
+                        return {
+                            code: 0,
+                            edited: edits.length,
+                        };
+                    });
+            });
+    }
+
+    private nothingToDo(context: HandlerContext) {
+        return context.messageClient
+            .respond("Nothing to do: No Spring Boot projects found in organization")
+            .then(r => {
+                return {
+                    code: 0,
+                    edited: 0,
+                };
+            });
     }
 
 }

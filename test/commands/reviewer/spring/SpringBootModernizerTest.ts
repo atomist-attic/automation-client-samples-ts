@@ -1,15 +1,22 @@
+import * as _ from "lodash";
 import "mocha";
 
-import * as assert from "power-assert";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
+import { ConsoleMessageClient } from "@atomist/automation-client/internal/message/ConsoleMessageSender";
 import { RepoFinder } from "@atomist/automation-client/operations/common/RepoFinder";
-import { VersionSpreadReviewer } from "../../../../src/commands/reviewer/VersionSpreadReviewer";
+import { RepoId, SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { RepoLoader } from "@atomist/automation-client/operations/common/repoLoader";
-import { RepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 import { Project } from "@atomist/automation-client/project/Project";
-import { SpringBootModernizer } from "../../../../src/commands/editor/spring/SpringBootModernizer";
-
+import * as assert from "power-assert";
+import { ProjectMatch, SpringBootModernizer } from "../../../../src/commands/editor/spring/SpringBootModernizer";
+import { NonSpringPom, springBootPom } from "../Poms";
 
 class TestModernizer extends SpringBootModernizer {
+
+    public edits = 0;
+    public versions: string[] = [];
 
     private readonly rf: RepoFinder;
     private readonly rl: RepoLoader;
@@ -36,57 +43,63 @@ class TestModernizer extends SpringBootModernizer {
     protected repoLoader(): RepoLoader {
         return this.rl;
     }
+
+    protected doEdit(context: HandlerContext, p: ProjectMatch, editor: ProjectEditor<any>,
+                     desiredVersion: string): Promise<any> {
+        this.edits++;
+        this.versions.push(desiredVersion);
+        this.versions = _.uniq(this.versions);
+        return Promise.resolve(true);
+    }
 }
 
 describe("SpringBootModernizer", () => {
 
-    // it("no comments for no matching artifact", done => {
-    //     const project = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
-    //     const repoId: RepoId = new SimpleRepoId("a", "b");
-    //
-    //     const vs = new TestVersionSpreadReviewer([{repoId, project}]);
-    //     vs.groupId = "none";
-    //     vs.artifactId = "nonsense";
-    //
-    //     vs.handle(null).then(hr => {
-    //         assert(hr.projectsReviewed === 1);
-    //         assert(hr.projectReviews.length === 1);
-    //         done();
-    //     }).catch(done);
-    // });
-    //
-    // it("finds version of matching artifact in single project", done => {
-    //     const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
-    //     const repoId: RepoId = new SimpleRepoId("a", "b");
-    //
-    //     const vs = new TestVersionSpreadReviewer([{repoId, project}]);
-    //     vs.groupId = "commons-io";
-    //     vs.artifactId = "commons-io";
-    //
-    //     vs.handle(null).then(hr => {
-    //         assert(hr.projectsReviewed === 1);
-    //         assert(hr.projectReviews.length === 1);
-    //         assert(hr.projectReviews[0].artifact === vs.artifactId);
-    //         assert(hr.projectReviews[0].group === vs.groupId);
-    //         assert(hr.projectReviews[0].version === "2.5");
-    //         done();
-    //     }).catch(done);
-    // });
-    //
-    // it("aggregates single version in single project", done => {
-    //     const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
-    //     const repoId: RepoId = new SimpleRepoId("a", "b");
-    //
-    //     const vs = new TestVersionSpreadReviewer([{repoId, project}]);
-    //     vs.groupId = "commons-io";
-    //     vs.artifactId = "commons-io";
-    //
-    //     vs.handle(null).then(hr => {
-    //         assert(hr.projectsReviewed === 1);
-    //         assert(hr.projectReviews.length === 1);
-    //         assert.deepEqual(hr.versions, ["2.5"]);
-    //         done();
-    //     }).catch(done);
-    // });
+    it("no comments for no matching artifact", done => {
+        const project = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
+        const repoId: RepoId = new SimpleRepoId("a", "b");
+
+        const vs = new TestModernizer([{repoId, project}]);
+
+        vs.handle({messageClient: new ConsoleMessageClient()} as any).then(hr => {
+            assert(hr.code === 0);
+            assert(vs.edits === 0);
+            done();
+        }).catch(done);
+    });
+
+    it("finds version of matching artifact in single project: nothing to do", done => {
+        const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const repoId: RepoId = new SimpleRepoId("a", "b");
+
+        const vs = new TestModernizer([{repoId, project}]);
+
+        vs.handle({messageClient: new ConsoleMessageClient()} as any).then(hr => {
+            assert(hr.code === 0);
+            assert(vs.edits === 0);
+            done();
+        }).catch(done);
+    });
+
+    it("upgrades one project", done => {
+        const project1 = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const project2 = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.5.2")});
+
+        const repoId1: RepoId = new SimpleRepoId("a", "b");
+        const repoId2: RepoId = new SimpleRepoId("a", "c");
+
+        const vs = new TestModernizer([
+            {repoId: repoId1, project: project1},
+            {repoId: repoId2, project: project2},
+        ]);
+
+        vs.handle({messageClient: new ConsoleMessageClient()} as any)
+            .then(hr => {
+                assert(hr.code === 0);
+                assert(vs.edits === 1);
+                assert.deepEqual(vs.versions, ["1.5.2"]);
+                done();
+            }).catch(done);
+    });
 
 });

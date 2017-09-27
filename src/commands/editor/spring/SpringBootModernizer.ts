@@ -9,10 +9,7 @@ import { logger } from "@atomist/automation-client/internal/util/logger";
 import { LocalOrRemoteRepoOperation } from "@atomist/automation-client/operations/common/LocalOrRemoteRepoOperation";
 import { RepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
-import {
-    createAndPushBranch,
-    editProjectUsingBranch,
-} from "@atomist/automation-client/operations/support/editorUtils";
+import { editProjectUsingBranch } from "@atomist/automation-client/operations/support/editorUtils";
 import { GitProject } from "@atomist/automation-client/project/git/GitProject";
 import { findMatches, Match } from "@atomist/automation-client/project/util/parseUtils";
 import { ArtifactContainer, parentStanzaOfGrammar } from "../../../grammars/mavenGrammars";

@@ -5,7 +5,7 @@ import { ReviewerCommandSupport } from "@atomist/automation-client/operations/re
 import { clean, ProjectReview, ReviewResult } from "@atomist/automation-client/operations/review/ReviewResult";
 import { findMatches } from "@atomist/automation-client/project/util/parseUtils";
 import { ParentStanzaGrammar } from "../../../grammars/mavenGrammars";
-import { SpringBootStarter } from "../../editor/spring/SpringConstants";
+import { SpringBootStarter } from "../../editor/spring/springConstants";
 
 @CommandHandler("Reviewer that flags old versions of Spring Boot", "review spring boot version")
 @Tags("atomist", "spring")

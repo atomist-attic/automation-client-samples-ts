@@ -2,7 +2,7 @@ import { logger } from "@atomist/automation-client/internal/util/logger";
 import { EditResult, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithAtMostOneMatch } from "@atomist/automation-client/project/util/parseUtils";
 import { parentStanzaOfGrammar } from "../../../grammars/mavenGrammars";
-import { SpringBootStarter } from "./SpringConstants";
+import { SpringBootStarter } from "./springConstants";
 
 /**
  * Set the Spring Boot version to

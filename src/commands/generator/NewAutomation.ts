@@ -17,6 +17,7 @@ export class NewAutomation extends UniversalSeed {
 
     constructor() {
         super();
+        this.sourceOwner ="atomist";
         this.sourceRepo = "automation-client-samples-ts";
     }
 

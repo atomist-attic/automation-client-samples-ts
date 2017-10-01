@@ -18,7 +18,7 @@ const token = process.env.GITHUB_TOKEN;
 export const configuration: Configuration = {
     name: pj.name ,
     version: pj.version,
-    teamId: "T1L0VDKJP", // <-- run @atomist pwd in your slack team to obtain the team id
+    teamId: "T29E48P34", // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         () => new HelloWorld(),
         () => new SpringBootVersionReviewer(),
@@ -46,9 +46,5 @@ export const configuration: Configuration = {
                 enabled: false,
             },
         },
-    },
-    endpoints: {
-        api: "https://automation-staging.atomist.services/registration",
-        graphql: "https://automation-staging.atomist.services/graphql/team",
     },
 };

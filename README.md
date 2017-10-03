@@ -52,7 +52,7 @@ $ npm install
 
 For the client to connect and authenticate to the Atomist API, a
 GitHub personal access token is required. Additionally the API
-is only allowing members of a GitHub team called `atommist-automation`
+is only allowing members of a GitHub team called `atomist-automation`
 to successfully authenticate and register a new client.
 
 Please create a team in your GitHub organization with the name
@@ -62,7 +62,7 @@ After that you can create a personal access token with `read:org`
 scope at https://github.com/settings/tokens. 
 
 Once you obtained the token, make it available to the client by
-exporting it into a environment variable:
+exporting it into an environment variable:
 
 ```
 $ export GITHUB_TOKEN=<your token goes here>
@@ -107,8 +107,8 @@ restart your local automation client, and see what happens!
 While command handlers respond to commands you send the Atomist bot,
 _event handlers_ take action when different types of events occur in
 your development and operations environment.  Some examples of events
-are commits are pushed to a repo, or a CI build fails, or an instance
-of a running service becomes unhealthy.  Example responses to those
+are commits pushed to a repo, or a CI build that fails, or an instance
+of a running service that becomes unhealthy.  Example responses to those
 events are showing the commits in a Slack message, automatically
 restarting the build, and triggering a PagerDuty alert, respectively.
 

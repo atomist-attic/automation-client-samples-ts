@@ -18,7 +18,6 @@
         ],
         "strict": true,
         "noImplicitAny": false,
-        "noImplicitThis": false,
         "strictNullChecks": false,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true

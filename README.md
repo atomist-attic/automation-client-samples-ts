@@ -1,5 +1,7 @@
 # @atomist/automation-client-samples
 
+[![Build Status](https://travis-ci.org/atomist/automation-client-samples-ts.svg?branch=master)](https://travis-ci.org/atomist/automation-client-samples-ts)
+
 This repository contains sample code demonstrating use of
 the [Atomist][atomist] API.  You will find examples illustrating:
 

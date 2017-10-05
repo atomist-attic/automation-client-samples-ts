@@ -45,9 +45,9 @@ const packageJsonNameGrammar = Microgrammar.fromString<{ name: string }>(
         name: /[^"]+/,
     });
 
-// teamId: "T1L0VDKJP",
+// teamIds: "T1L0VDKJP",
 export const atomistConfigTeamNameGrammar = Microgrammar.fromString<{ name: string }>(
-    'teamId: "${name}"',
+    'teamIds: "${name}"',
     {
         name: /T[0-9A-Z]+/,
     },

@@ -68,7 +68,7 @@ const actualAtomistConfigTsFragment = `
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
-    teamId: "T1L0VDKJP",
+    teamIds: "T1L0VDKJP",
     commands: [
         () => new HelloWorld(),
     ],

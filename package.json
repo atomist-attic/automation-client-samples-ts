@@ -1,7 +1,7 @@
 {
   "name": "@atomist/automation-client-samples",
   "version": "0.1.0",
-  "description": "This is my first Atomist automation node",
+  "description": "Sample Atomist automation client",
   "author": "Atomist.",
   "license": "GPL-3.0",
   "repository": {
@@ -17,7 +17,8 @@
     "url": "https://github.com/atomist/automation-client-samples-ts/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "^0.1.36",
+    "@atomist/automation-client": "^0.1.38",
+    "@atomist/microgrammar": "^0.7.0",
     "@atomist/slack-messages": "^0.11.0",
     "app-root-path": "^2.0.1",
     "cfenv": "^1.0.4"

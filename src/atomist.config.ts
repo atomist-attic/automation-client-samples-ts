@@ -18,7 +18,7 @@ const token = process.env.GITHUB_TOKEN;
 export const configuration: Configuration = {
     name: pj.name ,
     version: pj.version,
-    teamId: "T29E48P34", // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: "T29E48P34", // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         () => new HelloWorld(),
         () => new SpringBootVersionReviewer(),

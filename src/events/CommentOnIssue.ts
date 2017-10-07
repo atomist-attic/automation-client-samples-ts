@@ -27,7 +27,7 @@ import axios from "axios";
 @Tags("issue", "comment")
 export class CommentOnIssue implements HandleEvent<any> {
 
-    @Secret(Secrets.ORG_TOKEN)
+    @Secret(Secrets.OrgToken)
     public githubToken: string;
 
     public handle(e: EventFired<any>, ctx: HandlerContext): Promise<HandlerResult> {

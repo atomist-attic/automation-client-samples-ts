@@ -18,7 +18,7 @@ export class HelloWorld implements HandleCommand {
     @Parameter({ pattern: /^.*$/ })
     public name: string;
 
-    @MappedParameter(MappedParameters.SLACK_USER_NAME)
+    @MappedParameter(MappedParameters.SlackUserName)
     public slackUser: string;
 
     public handle(ctx: HandlerContext): Promise<HandlerResult> {

@@ -12,7 +12,7 @@ import { doWithAtMostOneMatch } from "@atomist/automation-client/project/util/pa
 @CommandHandler("Create a new automation repo", "new automation")
 export class NewAutomation extends UniversalSeed {
 
-    @MappedParameter(MappedParameters.SLACK_TEAM)
+    @MappedParameter(MappedParameters.SlackTeam)
     public team: string;
 
     constructor() {

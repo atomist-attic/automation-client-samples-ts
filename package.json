@@ -54,6 +54,7 @@
     "compile": "npm run gql:gen && tsc -p .",
     "distclean": "npm run clean ; rm -rf node_modules",
     "fmt": "tsfmt --replace",
+    "git:info": "node $NODE_DEBUG_OPTION --trace-warnings node_modules/@atomist/automation-client/git.info.js",
     "gql:gen": "gql-gen --file node_modules/@atomist/automation-client/graph/schema.cortex.json --template typescript -m --out ./src/typings/ \"./graphql/**/*.graphql\"",
     "lint": "tslint --format verbose --project . --exclude '{build,node_modules}/**' '**/*.ts'",
     "lint-fix": "npm run lint -- --fix",

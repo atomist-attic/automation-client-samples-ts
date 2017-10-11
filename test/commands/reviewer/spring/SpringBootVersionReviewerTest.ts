@@ -1,10 +1,10 @@
-import "mocha";
 import { ConsoleMessageClient } from "@atomist/automation-client/internal/message/ConsoleMessageClient";
 import { RepoId, SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
+import "mocha";
 import * as assert from "power-assert";
-import { SpringBootVersionReviewer, } from "../../../../src/commands/reviewer/spring/SpringBootVersionReviewer";
+import { SpringBootVersionReviewer } from "../../../../src/commands/reviewer/spring/SpringBootVersionReviewer";
 import { NonSpringPom, springBootPom } from "../maven/Poms";
 
 describe("SpringBootVersionReviewer", () => {

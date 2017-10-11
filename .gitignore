@@ -13,3 +13,6 @@ npm-debug.log
 graphql.config.json
 
 /config/default.json
+
+git-info.json
+

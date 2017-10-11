@@ -1,4 +1,5 @@
 import { MappedParameter } from "@atomist/automation-client/decorators";
+import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import {
     CommandHandler,
     HandleCommand,
@@ -35,13 +36,12 @@ export class HelloWorld implements HandleCommand {
             })
             .then(person => {
                 if (person) {
-                    return ctx.messageClient.respond(`Hello ${this.name} from ${person.forename} ${person.surname}`);
+                    return ctx.messageClient.respond(`Hello ${this.name} from ${person.forename}`);
                 } else {
                     return ctx.messageClient.respond(`Hello ${this.name}`);
                 }
             })
-            .then(() => {
-                return { code: 0 };
-            });
+            .then(() => Success)
+            .catch(err => failure(err));
     }
 }

@@ -11,7 +11,7 @@ import { CommentOnIssue } from "./events/CommentOnIssue";
 import { HelloIngestor } from "./events/HelloIngestor";
 import { NotifyOnPush } from "./events/NotifyOnPush";
 
-const pj = require(`${appRoot}//package.json`);
+const pj = require(`${appRoot.path}/package.json`);
 
 const token = process.env.GITHUB_TOKEN;
 

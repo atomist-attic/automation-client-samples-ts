@@ -25,7 +25,7 @@ export class HelloWorld implements HandleCommand {
     public handle(ctx: HandlerContext): Promise<HandlerResult> {
         logger.info(`Incoming parameter was ${this.name}`);
 
-        return ctx.graphClient.executeFile<graphql.Person.Query, graphql.Person.Variables>("graphql/person",
+        return ctx.graphClient.executeQueryFromFile<graphql.Person.Query, graphql.Person.Variables>("graphql/person",
             { teamId: ctx.teamId, slackUser: this.slackUser })
             .then(result => {
                 if (_.get(result, "ChatTeam[0].members[0].person")) {

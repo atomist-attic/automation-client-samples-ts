@@ -6,7 +6,7 @@ This repository contains sample code demonstrating use of
 the [Atomist][atomist] API.  You will find examples illustrating:
 
 -   Creating bot commands using _command handlers_
--   Responding to DevOps events, e.g., someone commenting on an issue,
+-   Responding to development events, e.g., someone commenting on an issue,
     using _event handlers_
 -   Ingestors _(coming soon)_
 

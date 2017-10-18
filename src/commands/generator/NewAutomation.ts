@@ -1,9 +1,9 @@
 import { CommandHandler, MappedParameter } from "@atomist/automation-client/decorators";
 import { UniversalSeed } from "@atomist/automation-client/operations/generate/UniversalSeed";
-import { Project, ProjectNonBlocking } from "@atomist/automation-client/project/Project";
 import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 
 import { MappedParameters } from "@atomist/automation-client/Handlers";
+import { Project } from "@atomist/automation-client/project/Project";
 import { doWithAtMostOneMatch } from "@atomist/automation-client/project/util/parseUtils";
 
 /**
@@ -22,21 +22,24 @@ export class NewAutomation extends UniversalSeed {
     }
 
     public manipulate(project: Project) {
-        this.editPackageJson(project);
-        this.editAtomistConfigTs(project);
+        return this.editPackageJson(project)
+            .then(editAtomistConfigTsToSetTeam(this.team));
     }
 
-    protected editPackageJson(p: ProjectNonBlocking) {
-        doWithAtMostOneMatch<{ name: string }>(p, "package.json", packageJsonNameGrammar, m => {
+    protected editPackageJson(p: Project): Promise<Project> {
+        return doWithAtMostOneMatch<{ name: string }, Project>(p, "package.json", packageJsonNameGrammar, m => {
             m.name = this.targetRepo;
-        }).defer();
+        });
     }
 
-    protected editAtomistConfigTs(p: ProjectNonBlocking) {
-        doWithAtMostOneMatch<{ name: string }>(p, "src/atomist.config.ts", atomistConfigTeamNameGrammar, m => {
-            m.name = this.team;
-        }).defer();
-    }
+}
+
+function editAtomistConfigTsToSetTeam(team: string): (p: Project) => Promise<Project> {
+    return p => doWithAtMostOneMatch<{ name: string }, Project>(p,
+        "src/atomist.config.ts", atomistConfigTeamNameGrammar, m => {
+            console.log(`Setting team to [${team}]`);
+            m.name = team;
+        });
 }
 
 // "name": "@atomist/automation-client-samples",

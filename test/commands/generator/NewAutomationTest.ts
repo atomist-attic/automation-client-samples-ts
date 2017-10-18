@@ -18,7 +18,7 @@ describe("NewAutomation", () => {
         ];
         const project = InMemoryProject.of(...files);
         const seed = new NewAutomation();
-        seed.manipulateAndFlush(project)
+        seed.manipulate(project)
             .then(_ => {
                 assert(project.fileCount === files.length);
                 done();
@@ -28,13 +28,13 @@ describe("NewAutomation", () => {
     it("edits this project", done => {
         const praw = new NodeFsLocalProject("test", appRoot.path);
         const p = InMemoryProject.of(
-            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: praw.findFileSync("src/atomist.config.ts").getContentSync() },
+            {path: "package.json", content: praw.findFileSync("package.json").getContentSync()},
+            {path: "src/atomist.config.ts", content: praw.findFileSync("src/atomist.config.ts").getContentSync()},
         );
         const seed = new NewAutomation();
         seed.targetRepo = "theTargetRepo";
         seed.team = "T1000";
-        seed.manipulateAndFlush(p)
+        seed.manipulate(p)
             .then(pr => {
                 const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
                 assert(newPackageJson.name === seed.targetRepo,

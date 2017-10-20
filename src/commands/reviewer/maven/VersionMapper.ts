@@ -5,8 +5,9 @@ import { HandleCommand } from "@atomist/automation-client/HandleCommand";
 import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
-import { logger } from "@atomist/automation-client/internal/util/logger";
 import { LocalOrRemoteRepoOperation } from "@atomist/automation-client/operations/common/LocalOrRemoteRepoOperation";
+import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
+import { Project } from "@atomist/automation-client/project/Project";
 import { findMatches } from "@atomist/automation-client/project/util/parseUtils";
 import { ArtifactContainer, DependencyGrammar } from "../../../grammars/mavenGrammars";
 import { VersionedArtifact } from "../../../grammars/VersionedArtifact";
@@ -23,34 +24,25 @@ export class VersionMapper extends LocalOrRemoteRepoOperation implements HandleC
     }
 
     public handle(context: HandlerContext): Promise<HandlerResult> {
-        // First, look for projects and work out version spread
-        return this.repoFinder()(context)
-            .then(repoIds => {
-                const reposToEdit = repoIds.filter(this.repoFilter);
-                logger.info("Repos to edit are " + reposToEdit.map(r => r.repo).join(","));
-                const allArtifactPromises: Array<Promise<VersionedArtifact[]>> =
-                    reposToEdit.map(id =>
-                        this.repoLoader()(id)
-                            .then(project => {
-                                return findMatches<ArtifactContainer>(project, "pom.xml",
-                                    DependencyGrammar, {contentTransformer: expandProperties},
-                                )
-                                    .then(match => match.map(m => m.gav));
-                            })
-                            .catch(err => {
-                                logger.warn("Error loading repo %s:%s - continuing...", id.owner, id.repo);
-                                return Promise.resolve(undefined);
-                            }),
-                    );
-                const arrayOfArrays: Promise<VersionedArtifact[][]> = Promise.all(allArtifactPromises);
-                return arrayOfArrays
-                    .then(pp => pp.filter(t => !!t))
-                    .then(arr => {
-                        return {
-                            code: 0,
-                            map: consolidate(arr),
-                        };
-                    });
+        // Find what we're looking for in each project
+        const findInProject = (p: Project) =>
+            findMatches<ArtifactContainer>(p, "pom.xml",
+                DependencyGrammar, {contentTransformer: expandProperties},
+            );
+
+        const arrayOfArrays: Promise<VersionedArtifact[][]> =
+            doWithAllRepos(context, this.githubToken, findInProject,
+                this, this.repoFinder(), this.repoFilter, this.repoLoader())
+                .then(matches => matches.map(acs =>
+                    acs.map(ac => ac.gav)));
+
+        return arrayOfArrays
+            .then(pp => pp.filter(t => !!t))
+            .then(arr => {
+                return {
+                    code: 0,
+                    map: consolidate(arr),
+                };
             });
     }
 

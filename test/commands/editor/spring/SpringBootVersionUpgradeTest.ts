@@ -15,8 +15,7 @@ describe("SpringBootVersionUpgrade", () => {
 
     it("does nothing to non Spring project", done => {
         const proj = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
-        const id: RepoId = new SimpleRepoId("a", "b");
-        editor()(id, proj, null).then(er => {
+        editor()(proj, null).then(er => {
             assert(!er.edited);
             done();
         }).catch(done);
@@ -27,8 +26,7 @@ describe("SpringBootVersionUpgrade", () => {
             path: "pom.xml",
             content: springBootPom(new SpringBootVersionUpgrade().desiredBootVersion),
         });
-        const id: RepoId = new SimpleRepoId("a", "b");
-        editor()(id, proj, null).then(er => {
+        editor()(proj, null).then(er => {
             assert(!er.edited);
             done();
         }).catch(done);
@@ -37,8 +35,7 @@ describe("SpringBootVersionUpgrade", () => {
     it("comment for old Spring project", done => {
         const v = "1.3.0";
         const proj = InMemoryProject.of({path: "pom.xml", content: springBootPom(v)});
-        const id: RepoId = new SimpleRepoId("a", "b");
-        editor()(id, proj, null).then(er => {
+        editor()(proj, null).then(er => {
             assert(er.edited);
             const updated = proj.findFileSync("pom.xml");
             assert(!updated.getContentSync().includes(v));

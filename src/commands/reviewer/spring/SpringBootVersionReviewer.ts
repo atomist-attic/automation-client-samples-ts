@@ -24,12 +24,12 @@ export class SpringBootVersionReviewer
     constructor() {
         // Check with an API call if the repo has a POM,
         // to save unnecessary cloning
-        super(r => this.local ? Promise.resolve(true) : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
+        super(r => this.local ? true : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
     }
 
     public projectReviewer(): ProjectReviewer {
         const desiredVersion = this.desiredBootVersion;
-        return (id, p, context) => {
+        return (p, context) => {
             return findMatches(p, "pom.xml", ParentStanzaGrammar)
                 .then(matches => {
                     if (matches.length > 0 && matches[0].gav.artifact === SpringBootStarter) {
@@ -38,10 +38,10 @@ export class SpringBootVersionReviewer
                         if (outDated) {
                             const comment = `Old version of Spring Boot: [${version}] - ` +
                                 `should have been [${this.desiredBootVersion}]`;
-                            return context.messageClient.respond(`\`${id.owner}:${id.repo}\`: ${comment}`)
+                            return context.messageClient.respond(`\`${p.id.owner}:${p.id.repo}\`: ${comment}`)
                                 .then(_ =>
                                     Promise.resolve({
-                                        repoId: id,
+                                        repoId: p.id,
                                         comments: [
                                             {
                                                 severity: "warn" as Severity,
@@ -54,7 +54,7 @@ export class SpringBootVersionReviewer
                                 );
                         }
                     }
-                    return Promise.resolve(clean(id));
+                    return Promise.resolve(clean(p.id));
                 });
         };
     }

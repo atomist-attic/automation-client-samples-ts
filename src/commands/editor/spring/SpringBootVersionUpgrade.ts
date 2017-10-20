@@ -1,7 +1,9 @@
 import { CommandHandler, Parameter, Tags } from "@atomist/automation-client/decorators";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
+import { EditMode, PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandSupport } from "@atomist/automation-client/operations/edit/EditorCommandSupport";
 import { EditResult, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { Project } from "@atomist/automation-client/project/Project";
 import { setSpringBootVersionEditor } from "./setSpringBootVersionEditor";
 
 /**
@@ -23,11 +25,16 @@ export class SpringBootVersionUpgrade extends EditorCommandSupport {
     constructor() {
         // Check with an API call if the repo has a POM,
         // to save unnecessary cloning
-        super(r => this.local ? Promise.resolve(true) : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
+        super(r => this.local ? true : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
     }
 
     public projectEditor(): ProjectEditor<EditResult> {
         return setSpringBootVersionEditor(this.desiredBootVersion);
     }
 
+    public editInfo(p: Project): EditMode {
+        return new PullRequest(
+            "spring-boot-" + this.desiredBootVersion,
+            "Upgrade Spring Boot to " + this.desiredBootVersion);
+    }
 }

@@ -28,7 +28,7 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
     constructor() {
         // Check with an API call if the repo has a POM,
         // to save unnecessary cloning
-        super(r => this.local ? Promise.resolve(true) : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
+        super(r => this.local ? true : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
     }
 
     public handle(context: HandlerContext): Promise<HandlerResult> {
@@ -77,10 +77,10 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
      * @return {Promise<any>}
      */
     protected doEdit(context: HandlerContext, p: ProjectMatch, editor: ProjectEditor<any>, desiredVersion: string) {
-        return editProjectUsingBranch(context, p.id, p.project, editor,
+        return editProjectUsingBranch(context, p.project, editor,
             {
                 branch: `atm-spring-boot-${desiredVersion}`,
-                commitMessage: `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.gav.version}`,
+                message: `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.gav.version}`,
             },
         )
             .catch(err => {

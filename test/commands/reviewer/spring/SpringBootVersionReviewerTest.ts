@@ -16,8 +16,9 @@ describe("SpringBootVersionReviewer", () => {
     it("no comments for non Spring project", done => {
         const proj = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
         const id: RepoId = new SimpleRepoId("a", "b");
+        (proj as any).id = id;
         const ctx = { messageClient: new ConsoleMessageClient() } as any;
-        reviewer()(id, proj, ctx).then(r => {
+        reviewer()(proj, ctx).then(r => {
             const rev = r as any;
             assert(rev.repoId.owner === id.owner);
             assert(rev.repoId.repo === id.repo);
@@ -32,8 +33,9 @@ describe("SpringBootVersionReviewer", () => {
         const v = "1.3.0";
         const proj = InMemoryProject.of({path: "pom.xml", content: springBootPom(v)});
         const id: RepoId = new SimpleRepoId("a", "b");
+        (proj as any).id = id;
         const ctx = { messageClient: new ConsoleMessageClient() } as any;
-        reviewer()(id, proj, ctx)
+        reviewer()(proj, ctx)
             .then(r => {
                 const rev = r as any;
                 assert(rev.repoId.owner === id.owner);

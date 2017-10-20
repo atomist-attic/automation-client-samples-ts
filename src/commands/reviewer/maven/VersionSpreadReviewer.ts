@@ -41,11 +41,11 @@ export class VersionSpreadReviewer extends ReviewerCommandSupport<LibraryCheckRe
     constructor() {
         // Check with an API call if the repo has a POM,
         // to save unnecessary cloning
-        super(r => this.local ? Promise.resolve(true) : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
+        super(r => this.local ? true : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
     }
 
     public projectReviewer(): ProjectReviewer<VersionReportReview> {
-        return (id, p, context) => {
+        return (p, context) => {
             return findMatches(p, "pom.xml",
                 dependencyOfGrammar(this.groupId, this.artifactId))
                 .then(matches => {
@@ -53,14 +53,14 @@ export class VersionSpreadReviewer extends ReviewerCommandSupport<LibraryCheckRe
                     if (matches.length > 0) {
                         const version = matches[0].gav.version;
                         return Promise.resolve({
-                            repoId: id,
+                            repoId: p.id,
                             comments: [],
                             group: this.groupId,
                             artifact: this.artifactId,
                             version,
                         });
                     }
-                    return Promise.resolve(clean(id) as VersionReportReview);
+                    return Promise.resolve(clean(p.id) as VersionReportReview);
                 });
         };
     }

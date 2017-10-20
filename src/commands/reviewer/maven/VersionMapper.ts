@@ -19,7 +19,7 @@ export class VersionMapper extends LocalOrRemoteRepoOperation implements HandleC
     constructor() {
         // Check with an API call if the repo has a POM,
         // to save unnecessary cloning
-        super(r => this.local ? Promise.resolve(true) : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
+        super(r => this.local ? true : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
     }
 
     public handle(context: HandlerContext): Promise<HandlerResult> {

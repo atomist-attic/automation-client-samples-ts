@@ -1,5 +1,5 @@
 import { logger } from "@atomist/automation-client/internal/util/logger";
-import { EditResult, ProjectEditor } from "@atomist/automation-client/operations/edit/projectEditor";
+import { EditResult, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";
 import { doWithAtMostOneMatch } from "@atomist/automation-client/project/util/parseUtils";
 import { assertContentIncludes } from "@atomist/automation-client/project/util/projectInvariants";
 import { parentStanzaOfGrammar } from "../../../grammars/mavenGrammars";
@@ -10,9 +10,9 @@ import { SpringBootStarter } from "./springConstants";
  * @param {string} desiredBootVersion
  * @return {ProjectEditor<EditResult>}
  */
-export function setSpringBootVersionEditor(desiredBootVersion: string): ProjectEditor<EditResult> {
+export function setSpringBootVersionEditor(desiredBootVersion: string): ProjectEditor {
     let edited = false;
-    return (id, p) => {
+    return p => {
         return doWithAtMostOneMatch(p, "pom.xml",
             parentStanzaOfGrammar(SpringBootStarter), m => {
                 if (m.version.value !== desiredBootVersion) {
@@ -23,13 +23,9 @@ export function setSpringBootVersionEditor(desiredBootVersion: string): ProjectE
                 }
             })
             .then(proj =>
-                 (edited) ?
-                assertContentIncludes(p, "pom.xml", desiredBootVersion) : proj,
+                (edited) ?
+                    assertContentIncludes(p, "pom.xml", desiredBootVersion) : proj,
             )
-            .then(_ => {
-                return {
-                    edited,
-                };
-            });
+            .then(_ => successfulEdit(p, edited));
     };
 }

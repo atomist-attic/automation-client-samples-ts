@@ -1,6 +1,7 @@
 import * as _ from "lodash";
 
 import { CommandHandler, Parameter, Tags } from "@atomist/automation-client/decorators";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { ProjectReviewer } from "@atomist/automation-client/operations/review/projectReviewer";
 import { ReviewerCommandSupport } from "@atomist/automation-client/operations/review/ReviewerCommandSupport";
@@ -8,7 +9,6 @@ import { clean, ProjectReview, ReviewResult } from "@atomist/automation-client/o
 import { findMatches } from "@atomist/automation-client/project/util/parseUtils";
 import { dependencyOfGrammar } from "../../../grammars/mavenGrammars";
 import { VersionedArtifact } from "../../../grammars/VersionedArtifact";
-import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 
 @CommandHandler("Reviewer that reports the range of versions of an artifact", "version spread")
 @Tags("atomist", "maven", "library")

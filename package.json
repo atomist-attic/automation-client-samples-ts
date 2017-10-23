@@ -17,7 +17,7 @@
     "url": "https://github.com/atomist/automation-client-samples-ts/issues"
   },
   "dependencies": {
-    "@atomist/automation-client": "^0.2.0",
+    "@atomist/automation-client": "https://atomist.jfrog.io/atomist/npm-dev/@atomist/automation-client/-/@atomist/automation-client-0.2.0-20171023011728.tgz",
     "@atomist/slack-messages": "^0.11.0",
     "app-root-path": "^2.0.1",
     "cfenv": "^1.0.4"

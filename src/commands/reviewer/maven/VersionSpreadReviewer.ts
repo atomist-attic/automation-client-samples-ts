@@ -8,6 +8,7 @@ import { clean, ProjectReview, ReviewResult } from "@atomist/automation-client/o
 import { findMatches } from "@atomist/automation-client/project/util/parseUtils";
 import { dependencyOfGrammar } from "../../../grammars/mavenGrammars";
 import { VersionedArtifact } from "../../../grammars/VersionedArtifact";
+import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 
 @CommandHandler("Reviewer that reports the range of versions of an artifact", "version spread")
 @Tags("atomist", "maven", "library")
@@ -44,7 +45,7 @@ export class VersionSpreadReviewer extends ReviewerCommandSupport<LibraryCheckRe
         super(r => this.local ? true : hasFile(this.githubToken, r.owner, r.repo, "pom.xml"));
     }
 
-    public projectReviewer(): ProjectReviewer<VersionReportReview> {
+    public projectReviewer(): ProjectReviewer<this, VersionReportReview> {
         return (p, context) => {
             return findMatches(p, "pom.xml",
                 dependencyOfGrammar(this.groupId, this.artifactId))

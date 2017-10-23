@@ -48,7 +48,7 @@ describe("VersionSpreadReviewer", () => {
         vs.groupId = "none";
         vs.artifactId = "nonsense";
 
-        vs.handle(null).then(hr => {
+        vs.handle(null, vs).then(hr => {
             assert(hr.projectsReviewed === 1);
             assert(hr.projectReviews.length === 1);
             done();
@@ -63,7 +63,7 @@ describe("VersionSpreadReviewer", () => {
         vs.groupId = "commons-io";
         vs.artifactId = "commons-io";
 
-        vs.handle(null).then(hr => {
+        vs.handle(null, vs).then(hr => {
             assert(hr.projectsReviewed === 1);
             assert(hr.projectReviews.length === 1);
             assert(hr.projectReviews[0].artifact === vs.artifactId);
@@ -81,7 +81,7 @@ describe("VersionSpreadReviewer", () => {
         vs.groupId = "commons-io";
         vs.artifactId = "commons-io";
 
-        vs.handle(null).then(hr => {
+        vs.handle(null, vs).then(hr => {
             assert(hr.projectsReviewed === 1);
             assert(hr.projectReviews.length === 1);
             assert.deepEqual(hr.versions, ["2.5"]);

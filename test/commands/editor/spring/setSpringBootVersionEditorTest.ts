@@ -11,7 +11,7 @@ import { springBootPom } from "../../reviewer/maven/Poms";
 describe("setSpringBootVersionEditor", () => {
 
     it("doesn't edit empty project", done => {
-        const p = new InMemoryProject("");
+        const p = new InMemoryProject();
         setSpringBootVersionEditor("1.3.1")(p, null)
             .then(r => {
                 assert(!r.edited);

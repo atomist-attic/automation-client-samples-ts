@@ -20,12 +20,13 @@ export const configuration: Configuration = {
     version: pj.version,
     teamIds: "T01234567", // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
-        () => new HelloWorld(),
-        () => new SpringBootVersionReviewer(),
-        () => new VersionSpreadReviewer(),
-        () => new VersionMapper(),
-        () => new NewAutomation(),
-        () => new SpringBootModernizer(),
+        HelloWorld,
+        SpringBootVersionReviewer,
+        VersionSpreadReviewer,
+        VersionMapper,
+        NewAutomation,
+        SpringBootModernizer,
+        // Use a factory if you like...
         () => new SpringBootVersionUpgrade(),
     ],
     events: [

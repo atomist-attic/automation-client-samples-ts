@@ -31,7 +31,7 @@ export class VersionMapper extends LocalOrRemoteRepoOperation implements HandleC
             );
 
         const arrayOfArrays: Promise<VersionedArtifact[][]> =
-            doWithAllRepos(context, this.githubToken, findInProject,
+            doWithAllRepos(context, {token: this.githubToken }, findInProject,
                 this, this.repoFinder(), this.repoFilter, this.repoLoader())
                 .then(matches => matches.map(acs =>
                     acs.map(ac => ac.gav)));

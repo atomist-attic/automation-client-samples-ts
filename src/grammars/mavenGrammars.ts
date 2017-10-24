@@ -39,7 +39,7 @@ export const GavGrammar = Microgrammar.fromDefinitions<{ gav: VersionedArtifact 
         const artifact = ctx.tags.filter(tag => tag.name === "artifactId")[0].value;
         const versions = ctx.tags.filter(tag => tag.name === "version");
         const version = versions.length === 1 ? versions[0].value : undefined;
-        return {group, artifact, version};
+        return { group, artifact, version };
     },
 });
 

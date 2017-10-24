@@ -48,7 +48,7 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
                                         if (matches.length === 1) {
                                             versions.push(matches[0].gav.version);
                                             console.log("Found version [%s]", matches[0].gav.version);
-                                            return {id, project: project as GitProject, match: matches[0]};
+                                            return { id, project: project as GitProject, match: matches[0] };
                                         } else {
                                             return undefined;
                                         }
@@ -66,7 +66,7 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
                 springBootProjects.length > 0 ?
                     this.editAll(context, springBootProjects, versions) :
                     this.nothingToDo(context),
-            );
+        );
     }
 
     /**
@@ -102,12 +102,12 @@ export class SpringBootModernizer extends LocalOrRemoteRepoOperation implements 
                 const edits = springBootProjects
                     .filter(p => p.match.gav.version !== desiredVersion)
                     .map(p => {
-                            return context.messageClient.respond(
-                                `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.gav.version}`)
-                                .then(x =>
-                                    this.doEdit(context, p, editor, desiredVersion));
-                        },
-                    );
+                        return context.messageClient.respond(
+                            `Migrating ${p.id.repo} to Spring Boot ${desiredVersion} from ${p.match.gav.version}`)
+                            .then(x =>
+                                this.doEdit(context, p, editor, desiredVersion));
+                    },
+                );
                 return Promise.all(edits)
                     .then(eds => {
                         return {

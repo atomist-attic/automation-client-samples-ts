@@ -28,8 +28,8 @@ describe("NewAutomation", () => {
     it("edits this project", done => {
         const praw = new NodeFsLocalProject("test", appRoot.path);
         const p = InMemoryProject.of(
-            {path: "package.json", content: praw.findFileSync("package.json").getContentSync()},
-            {path: "src/atomist.config.ts", content: praw.findFileSync("src/atomist.config.ts").getContentSync()},
+            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
+            { path: "src/atomist.config.ts", content: praw.findFileSync("src/atomist.config.ts").getContentSync() },
         );
         const seed = new NewAutomation();
         seed.targetRepo = "theTargetRepo";

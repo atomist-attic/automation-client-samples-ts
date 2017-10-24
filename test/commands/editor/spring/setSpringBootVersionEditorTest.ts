@@ -20,7 +20,7 @@ describe("setSpringBootVersionEditor", () => {
     });
 
     it("reports editing Spring Boot project", done => {
-        const p = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const p = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
         const repoId: RepoId = new SimpleRepoId("a", "b");
         setSpringBootVersionEditor("1.3.1")(p, null)
             .then(r => {
@@ -30,7 +30,7 @@ describe("setSpringBootVersionEditor", () => {
     });
 
     it("actually edits Spring Boot project in memory", done => {
-        const p = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const p = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
         setSpringBootVersionEditor("1.3.1")(p, null)
             .then(r => {
                 assert(r.edited);

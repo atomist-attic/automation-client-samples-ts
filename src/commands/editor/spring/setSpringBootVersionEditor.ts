@@ -25,7 +25,7 @@ export function setSpringBootVersionEditor(desiredBootVersion: string): ProjectE
             .then(proj =>
                 (edited) ?
                     assertContentIncludes(p, "pom.xml", desiredBootVersion) : proj,
-            )
+        )
             .then(_ => successfulEdit(p, edited));
     };
 }

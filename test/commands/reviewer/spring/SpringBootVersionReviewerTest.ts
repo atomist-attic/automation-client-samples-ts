@@ -14,7 +14,7 @@ describe("SpringBootVersionReviewer", () => {
     }
 
     it("no comments for non Spring project", done => {
-        const proj = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
+        const proj = InMemoryProject.of({ path: "pom.xml", content: NonSpringPom });
         const id: RepoId = new SimpleRepoId("a", "b");
         (proj as any).id = id;
         const ctx = { messageClient: new ConsoleMessageClient() } as any;
@@ -31,7 +31,7 @@ describe("SpringBootVersionReviewer", () => {
 
     it("comment for old Spring project", done => {
         const v = "1.3.0";
-        const proj = InMemoryProject.of({path: "pom.xml", content: springBootPom(v)});
+        const proj = InMemoryProject.of({ path: "pom.xml", content: springBootPom(v) });
         const id: RepoId = new SimpleRepoId("a", "b");
         (proj as any).id = id;
         const ctx = { messageClient: new ConsoleMessageClient() } as any;

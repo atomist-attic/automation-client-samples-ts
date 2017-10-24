@@ -51,7 +51,7 @@ export class SpringBootVersionReviewer
                                         version,
                                         desiredVersion,
                                     }),
-                                );
+                            );
                         }
                     }
                     return Promise.resolve(clean(p.id));

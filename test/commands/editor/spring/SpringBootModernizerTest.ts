@@ -45,7 +45,7 @@ class TestModernizer extends SpringBootModernizer {
     }
 
     protected doEdit(context: HandlerContext, p: ProjectMatch, editor: ProjectEditor<any>,
-                     desiredVersion: string): Promise<any> {
+        desiredVersion: string): Promise<any> {
         this.edits++;
         this.versions.push(desiredVersion);
         this.versions = _.uniq(this.versions);
@@ -56,12 +56,12 @@ class TestModernizer extends SpringBootModernizer {
 describe("SpringBootModernizer", () => {
 
     it("no comments for no matching artifact", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
+        const project = InMemoryProject.of({ path: "pom.xml", content: NonSpringPom });
         const repoId: RepoId = new SimpleRepoId("a", "b");
 
-        const vs = new TestModernizer([{repoId, project}]);
+        const vs = new TestModernizer([{ repoId, project }]);
 
-        vs.handle({messageClient: new ConsoleMessageClient()} as any).then(hr => {
+        vs.handle({ messageClient: new ConsoleMessageClient() } as any).then(hr => {
             assert(hr.code === 0);
             assert(vs.edits === 0);
             done();
@@ -69,12 +69,12 @@ describe("SpringBootModernizer", () => {
     });
 
     it("finds version of matching artifact in single project: nothing to do", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const project = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
         const repoId: RepoId = new SimpleRepoId("a", "b");
 
-        const vs = new TestModernizer([{repoId, project}]);
+        const vs = new TestModernizer([{ repoId, project }]);
 
-        vs.handle({messageClient: new ConsoleMessageClient()} as any).then(hr => {
+        vs.handle({ messageClient: new ConsoleMessageClient() } as any).then(hr => {
             assert(hr.code === 0);
             assert(vs.edits === 0);
             done();
@@ -82,18 +82,18 @@ describe("SpringBootModernizer", () => {
     });
 
     it("upgrades one project", done => {
-        const project1 = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
-        const project2 = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.5.2")});
+        const project1 = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
+        const project2 = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.5.2") });
 
         const repoId1: RepoId = new SimpleRepoId("a", "b");
         const repoId2: RepoId = new SimpleRepoId("a", "c");
 
         const vs = new TestModernizer([
-            {repoId: repoId1, project: project1},
-            {repoId: repoId2, project: project2},
+            { repoId: repoId1, project: project1 },
+            { repoId: repoId2, project: project2 },
         ]);
 
-        vs.handle({messageClient: new ConsoleMessageClient()} as any)
+        vs.handle({ messageClient: new ConsoleMessageClient() } as any)
             .then(hr => {
                 assert(hr.code === 0);
                 assert(vs.edits === 1);

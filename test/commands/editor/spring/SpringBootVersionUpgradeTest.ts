@@ -14,7 +14,7 @@ describe("SpringBootVersionUpgrade", () => {
     }
 
     it("does nothing to non Spring project", done => {
-        const proj = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
+        const proj = InMemoryProject.of({ path: "pom.xml", content: NonSpringPom });
         editor()(proj, null).then(er => {
             assert(!er.edited);
             done();
@@ -34,7 +34,7 @@ describe("SpringBootVersionUpgrade", () => {
 
     it("comment for old Spring project", done => {
         const v = "1.3.0";
-        const proj = InMemoryProject.of({path: "pom.xml", content: springBootPom(v)});
+        const proj = InMemoryProject.of({ path: "pom.xml", content: springBootPom(v) });
         editor()(proj, null).then(er => {
             assert(er.edited);
             const updated = proj.findFileSync("pom.xml");

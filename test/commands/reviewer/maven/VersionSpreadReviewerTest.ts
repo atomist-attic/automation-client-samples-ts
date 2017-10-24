@@ -41,10 +41,10 @@ class TestVersionSpreadReviewer extends VersionSpreadReviewer {
 describe("VersionSpreadReviewer", () => {
 
     it("no comments for no matching artifact", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
+        const project = InMemoryProject.of({ path: "pom.xml", content: NonSpringPom });
         const repoId: RepoId = new SimpleRepoId("a", "b");
 
-        const vs = new TestVersionSpreadReviewer([{repoId, project}]);
+        const vs = new TestVersionSpreadReviewer([{ repoId, project }]);
         vs.groupId = "none";
         vs.artifactId = "nonsense";
 
@@ -56,10 +56,10 @@ describe("VersionSpreadReviewer", () => {
     });
 
     it("finds version of matching artifact in single project", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const project = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
         const repoId: RepoId = new SimpleRepoId("a", "b");
 
-        const vs = new TestVersionSpreadReviewer([{repoId, project}]);
+        const vs = new TestVersionSpreadReviewer([{ repoId, project }]);
         vs.groupId = "commons-io";
         vs.artifactId = "commons-io";
 
@@ -74,10 +74,10 @@ describe("VersionSpreadReviewer", () => {
     });
 
     it("aggregates single version in single project", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const project = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
         const repoId: RepoId = new SimpleRepoId("a", "b");
 
-        const vs = new TestVersionSpreadReviewer([{repoId, project}]);
+        const vs = new TestVersionSpreadReviewer([{ repoId, project }]);
         vs.groupId = "commons-io";
         vs.artifactId = "commons-io";
 

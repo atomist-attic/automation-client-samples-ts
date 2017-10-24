@@ -21,14 +21,14 @@ export class NotifyOnPush implements HandleEvent<graphql.PushWithRepo.Subscripti
         logger.info(`Incoming event is %s`, JSON.stringify(e.data, null, 2));
 
         return Promise.all(e.data.Push.map(p => {
-                const channels = _.get(p, "repo.channels") as graphql.PushWithRepo.Channels[];
-                if (channels && channels.length > 0) {
-                    return ctx.messageClient.addressChannels(`Got a push with sha \`${p.after.sha}\``,
-                        channels.map(c => c.name));
-                } else {
-                    return Success;
-                }
-            }))
+            const channels = _.get(p, "repo.channels") as graphql.PushWithRepo.Channels[];
+            if (channels && channels.length > 0) {
+                return ctx.messageClient.addressChannels(`Got a push with sha \`${p.after.sha}\``,
+                    channels.map(c => c.name));
+            } else {
+                return Success;
+            }
+        }))
             .then(() => Success)
             .catch(() => Failure);
     }

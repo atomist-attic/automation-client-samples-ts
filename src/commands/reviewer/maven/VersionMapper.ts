@@ -27,11 +27,11 @@ export class VersionMapper extends LocalOrRemoteRepoOperation implements HandleC
         // Find what we're looking for in each project
         const findInProject = (p: Project) =>
             findMatches<ArtifactContainer>(p, "pom.xml",
-                DependencyGrammar, {contentTransformer: expandProperties},
+                DependencyGrammar, { contentTransformer: expandProperties },
             );
 
         const arrayOfArrays: Promise<VersionedArtifact[][]> =
-            doWithAllRepos(context, {token: this.githubToken }, findInProject,
+            doWithAllRepos(context, { token: this.githubToken }, findInProject,
                 this, this.repoFinder(), this.repoFilter, this.repoLoader())
                 .then(matches => matches.map(acs =>
                     acs.map(ac => ac.gav)));

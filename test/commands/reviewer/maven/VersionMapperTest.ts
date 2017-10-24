@@ -37,7 +37,7 @@ class TestVersionMapper extends VersionMapper {
 describe("VersionMapper", () => {
 
     it("no comments for no matching artifact", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: NonSpringPom});
+        const project = InMemoryProject.of({ path: "pom.xml", content: NonSpringPom });
         const repoId: RepoId = new SimpleRepoId("a", "b");
         (project as any).id = repoId;
 
@@ -51,7 +51,7 @@ describe("VersionMapper", () => {
     });
 
     it("finds version", done => {
-        const project = InMemoryProject.of({path: "pom.xml", content: springBootPom("1.3.0")});
+        const project = InMemoryProject.of({ path: "pom.xml", content: springBootPom("1.3.0") });
         const repoId: RepoId = new SimpleRepoId("a", "b");
         (project as any).id = repoId;
 
@@ -77,7 +77,7 @@ describe("artifact consolidate", () => {
     });
 
     it("consolidates single", () => {
-        const arrs: VersionedArtifact[][] = [[{group: "g", artifact: "a", version: "1.0"}]];
+        const arrs: VersionedArtifact[][] = [[{ group: "g", artifact: "a", version: "1.0" }]];
         const consolidated = consolidate(arrs);
         assert.deepEqual(consolidated,
             {

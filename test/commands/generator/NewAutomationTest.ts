@@ -6,7 +6,11 @@ import { NodeFsLocalProject } from "@atomist/automation-client/project/local/Nod
 import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFile";
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
-import { atomistConfigTeamNameGrammar, NewAutomation } from "../../../src/commands/generator/NewAutomation";
+import {
+    atomistConfigTeamNameGrammar,
+    NewAutomation,
+    teamMatchToArray,
+} from "../../../src/commands/generator/NewAutomation";
 
 describe("NewAutomation", () => {
 
@@ -40,12 +44,155 @@ describe("NewAutomation", () => {
                 assert(newPackageJson.name === seed.targetRepo,
                     `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
 
-                // teamId: "T1L0VDKJP",
                 const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
                 assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
                 done();
             }).catch(done);
     });
+
+    it("edits a config with an teamIds string", done => {
+        const config = `export const configuration: Configuration = {
+    name: pj.name,
+    version: pj.version,
+    teamIds: "T1L0VDKJP",
+    commands: [
+        () => new HelloWorld(),
+    ],
+}`;
+        const praw = new NodeFsLocalProject("test", appRoot.path);
+        const p = InMemoryProject.of(
+            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
+            { path: "src/atomist.config.ts", content: config },
+        );
+        const seed = new NewAutomation();
+        seed.targetRepo = "theTargetRepo";
+        seed.team = "T1000";
+        seed.manipulate(p)
+            .then(pr => {
+                const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
+                assert(newPackageJson.name === seed.targetRepo,
+                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+
+                const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
+                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                done();
+            }).catch(done);
+    });
+
+    it("edits a config with teamIds array", done => {
+        const config = `export const configuration: Configuration = {
+    name: pj.name,
+    version: pj.version,
+    teamIds: ["T1L0VDKJP", "TK421", "T100"],
+    commands: [
+        () => new HelloWorld(),
+    ],
+};`;
+        const praw = new NodeFsLocalProject("test", appRoot.path);
+        const p = InMemoryProject.of(
+            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
+            { path: "src/atomist.config.ts", content: config },
+        );
+        const seed = new NewAutomation();
+        seed.targetRepo = "theTargetRepo";
+        seed.team = "T1000";
+        seed.manipulate(p)
+            .then(pr => {
+                const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
+                assert(newPackageJson.name === seed.targetRepo,
+                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+
+                const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
+                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                done();
+            }).catch(done);
+    });
+
+    it("edits a config with null teamIds", done => {
+        const config = `export const configuration: Configuration = {
+    name: pj.name,
+    version: pj.version,
+    teamIds: null,
+    commands: [
+        () => new HelloWorld(),
+    ],
+}`;
+        const praw = new NodeFsLocalProject("test", appRoot.path);
+        const p = InMemoryProject.of(
+            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
+            { path: "src/atomist.config.ts", content: config },
+        );
+        const seed = new NewAutomation();
+        seed.targetRepo = "theTargetRepo";
+        seed.team = "T1000";
+        seed.manipulate(p)
+            .then(pr => {
+                const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
+                assert(newPackageJson.name === seed.targetRepo,
+                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+
+                const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
+                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                done();
+            }).catch(done);
+    });
+
+    it("edits a config with undefined teamIds", done => {
+        const config = `export const configuration: Configuration = {
+    name: pj.name,
+    version: pj.version,
+    teamIds: undefined,
+    commands: [
+        () => new HelloWorld(),
+    ],
+}`;
+        const praw = new NodeFsLocalProject("test", appRoot.path);
+        const p = InMemoryProject.of(
+            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
+            { path: "src/atomist.config.ts", content: config },
+        );
+        const seed = new NewAutomation();
+        seed.targetRepo = "theTargetRepo";
+        seed.team = "T1000";
+        seed.manipulate(p)
+            .then(pr => {
+                const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
+                assert(newPackageJson.name === seed.targetRepo,
+                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+
+                const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
+                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                done();
+            }).catch(done);
+    });
+
+    it("edits a config with no teamIds", /* done => {
+        const config = `export const configuration: Configuration = {
+    name: pj.name,
+    version: pj.version,
+    commands: [
+        () => new HelloWorld(),
+    ],
+}`;
+        const praw = new NodeFsLocalProject("test", appRoot.path);
+        const p = InMemoryProject.of(
+            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
+            { path: "src/atomist.config.ts", content: config },
+        );
+        const seed = new NewAutomation();
+        seed.targetRepo = "theTargetRepo";
+        seed.team = "T1000";
+        seed.manipulate(p)
+            .then(pr => {
+                const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
+                assert(newPackageJson.name === seed.targetRepo,
+                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+
+                const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
+                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                done();
+            }).catch(done);
+    } */);
 
 });
 
@@ -57,19 +204,31 @@ describe("atomist.config.ts microgrammar", () => {
     });
 
     it("should match actual content", () => {
-        const matches = atomistConfigTeamNameGrammar.findMatches(actualAtomistConfigTsFragment);
-        assert(matches.length === 1);
-        assert(matches[0].name === "T1L0VDKJP");
-    });
-
-});
-
-const actualAtomistConfigTsFragment = `
-export const configuration: Configuration = {
+        const actualAtomistConfigTsFragment = `export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
     teamIds: "T1L0VDKJP",
     commands: [
         () => new HelloWorld(),
     ],
-    }`;
+}`;
+        const matches = atomistConfigTeamNameGrammar.findMatches(actualAtomistConfigTsFragment);
+        assert(matches.length === 1);
+        assert.deepEqual(teamMatchToArray(matches[0]), ["T1L0VDKJP"]);
+    });
+
+    it("should match content with teamIds array", () => {
+        const actualAtomistConfigTsFragment = `export const configuration: Configuration = {
+    name: pj.name,
+    version: pj.version,
+    teamIds: ["T1L0VDKJP", "TK421", "T100"],
+    commands: [
+        () => new HelloWorld(),
+    ],
+}`;
+        const matches = atomistConfigTeamNameGrammar.findMatches(actualAtomistConfigTsFragment);
+        assert(matches.length === 1);
+        assert.deepEqual(teamMatchToArray(matches[0]), ["T1L0VDKJP", "TK421", "T100"]);
+    });
+
+});

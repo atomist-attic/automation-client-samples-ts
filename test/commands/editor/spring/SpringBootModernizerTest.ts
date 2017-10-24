@@ -45,7 +45,7 @@ class TestModernizer extends SpringBootModernizer {
     }
 
     protected doEdit(context: HandlerContext, p: ProjectMatch, editor: ProjectEditor<any>,
-        desiredVersion: string): Promise<any> {
+                     desiredVersion: string): Promise<any> {
         this.edits++;
         this.versions.push(desiredVersion);
         this.versions = _.uniq(this.versions);

@@ -1,4 +1,5 @@
-import { CommandHandler, Parameter, Tags } from "@atomist/automation-client/decorators";
+import { CommandHandler, Parameter, Secret, Tags } from "@atomist/automation-client/decorators";
+import { Secrets } from "@atomist/automation-client/Handlers";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { EditMode, PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandSupport } from "@atomist/automation-client/operations/edit/EditorCommandSupport";
@@ -12,6 +13,9 @@ import { setSpringBootVersionEditor } from "./setSpringBootVersionEditor";
 @CommandHandler("Upgrade versions of Spring Boot across an org", "upgrade spring boot version")
 @Tags("atomist", "spring")
 export class SpringBootVersionUpgrade extends EditorCommandSupport {
+
+    @Secret(Secrets.UserToken)
+    public githubToken: string;
 
     @Parameter({
         displayName: "Desired Spring Boot version",

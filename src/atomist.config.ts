@@ -2,9 +2,11 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { SpringBootModernizer } from "./commands/editor/spring/SpringBootModernizer";
 import { SpringBootVersionUpgrade } from "./commands/editor/spring/SpringBootVersionUpgrade";
+import { UpdateCopyright } from "./commands/editor/UpdateCopyright";
 import { NewAutomation } from "./commands/generator/NewAutomation";
 import { VersionMapper } from "./commands/reviewer/maven/VersionMapper";
 import { VersionSpreadReviewer } from "./commands/reviewer/maven/VersionSpreadReviewer";
+import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
 import { SpringBootVersionReviewer } from "./commands/reviewer/spring/SpringBootVersionReviewer";
 import { HelloWorld } from "./commands/simple/HelloWorld";
 import { CommentOnIssue } from "./events/CommentOnIssue";
@@ -18,7 +20,7 @@ const token = process.env.GITHUB_TOKEN;
 export const configuration: Configuration = {
     name: pj.name,
     version: pj.version,
-    teamIds: [], // <-- run @atomist pwd in your slack team to obtain the team id
+    teamIds: ["T095SFFBK"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         HelloWorld,
         SpringBootVersionReviewer,
@@ -26,6 +28,8 @@ export const configuration: Configuration = {
         VersionMapper,
         NewAutomation,
         SpringBootModernizer,
+        UpdateCopyright,
+        ReviewCopyright,
         // Use a factory if you like...
         () => new SpringBootVersionUpgrade(),
     ],

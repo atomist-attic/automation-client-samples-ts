@@ -1,9 +1,10 @@
 import * as _ from "lodash";
 
-import { CommandHandler, Tags } from "@atomist/automation-client/decorators";
+import { CommandHandler, Secret, Tags } from "@atomist/automation-client/decorators";
 import { HandleCommand } from "@atomist/automation-client/HandleCommand";
 import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
+import { Secrets } from "@atomist/automation-client/Handlers";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { LocalOrRemoteRepoOperation } from "@atomist/automation-client/operations/common/LocalOrRemoteRepoOperation";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";
@@ -16,6 +17,9 @@ import { expandProperties } from "./utils";
 @CommandHandler("Reviewer that reports the range of versions of all Maven dependencies", "version map")
 @Tags("atomist", "maven", "library")
 export class VersionMapper extends LocalOrRemoteRepoOperation implements HandleCommand {
+
+    @Secret(Secrets.UserToken)
+    public githubToken: string;
 
     constructor() {
         // Check with an API call if the repo has a POM,

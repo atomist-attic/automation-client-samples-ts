@@ -1,5 +1,3 @@
-import { MappedParameter } from "@atomist/automation-client/decorators";
-import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import {
     CommandHandler,
     HandleCommand,
@@ -7,7 +5,9 @@ import {
     HandlerResult, MappedParameters,
     Parameter,
     Tags,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
+import { MappedParameter } from "@atomist/automation-client/decorators";
+import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import { logger } from "@atomist/automation-client/internal/util/logger";
 import * as _ from "lodash";
 import * as graphql from "../../typings/types";

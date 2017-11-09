@@ -1,10 +1,10 @@
 import * as _ from "lodash";
 
+import { Secrets } from "@atomist/automation-client";
 import { CommandHandler, Secret, Tags } from "@atomist/automation-client/decorators";
 import { HandleCommand } from "@atomist/automation-client/HandleCommand";
 import { HandlerContext } from "@atomist/automation-client/HandlerContext";
 import { HandlerResult } from "@atomist/automation-client/HandlerResult";
-import { Secrets } from "@atomist/automation-client/Handlers";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { LocalOrRemoteRepoOperation } from "@atomist/automation-client/operations/common/LocalOrRemoteRepoOperation";
 import { doWithAllRepos } from "@atomist/automation-client/operations/common/repoUtils";

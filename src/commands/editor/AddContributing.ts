@@ -1,14 +1,13 @@
-import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import {
-    CommandHandler,
+    CommandHandler, failure,
     HandleCommand,
     HandlerContext,
     HandlerResult,
     MappedParameter,
     MappedParameters,
     Secret,
-    Secrets,
-} from "@atomist/automation-client/Handlers";
+    Secrets, success,
+} from "@atomist/automation-client";
 import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { editOne } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
@@ -41,6 +40,6 @@ export class AddContributing implements HandleCommand {
             editProject, // a function to change the project
             pullRequest, // how to save the edit
             gitHubRepo) // where to find the project
-            .then(() => Success, failure);
+            .then(success, failure);
     }
 }

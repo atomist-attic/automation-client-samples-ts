@@ -4,7 +4,7 @@ import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
 import { Alt, Opt } from "@atomist/microgrammar/Ops";
 import { RepSep } from "@atomist/microgrammar/Rep";
 
-import { MappedParameters } from "@atomist/automation-client/Handlers";
+import { MappedParameters } from "@atomist/automation-client";
 import { Project } from "@atomist/automation-client/project/Project";
 import { doWithAtMostOneMatch, findMatches } from "@atomist/automation-client/project/util/parseUtils";
 

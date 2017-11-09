@@ -7,7 +7,7 @@ import {
     Secret,
     Secrets,
     Tags,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
 import axios from "axios";
 
 @EventHandler("Notify channel on new issue and add comment to issue", `subscription CommentOnIssue

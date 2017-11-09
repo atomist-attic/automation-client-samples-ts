@@ -10,7 +10,6 @@ import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
 import { SpringBootVersionReviewer } from "./commands/reviewer/spring/SpringBootVersionReviewer";
 import { HelloWorld } from "./commands/simple/HelloWorld";
 import { CommentOnIssue } from "./events/CommentOnIssue";
-import { HelloIngestor } from "./events/HelloIngestor";
 import { NotifyOnPush } from "./events/NotifyOnPush";
 
 const pj = require(`${appRoot.path}/package.json`);
@@ -36,9 +35,6 @@ export const configuration: Configuration = {
     events: [
         () => new CommentOnIssue(),
         () => new NotifyOnPush(),
-    ],
-    ingestors: [
-        () => new HelloIngestor(),
     ],
     token,
     http: {

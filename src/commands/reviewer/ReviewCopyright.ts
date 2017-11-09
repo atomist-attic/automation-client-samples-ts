@@ -1,4 +1,3 @@
-import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import {
     CommandHandler,
     HandleCommand,
@@ -6,7 +5,8 @@ import {
     HandlerResult,
     Secret,
     Secrets,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
+import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import { isGitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
 import { RepoRef } from "@atomist/automation-client/operations/common/RepoId";
 import { reviewAll } from "@atomist/automation-client/operations/review/reviewAll";

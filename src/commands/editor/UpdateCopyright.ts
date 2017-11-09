@@ -1,4 +1,3 @@
-import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import {
     CommandHandler,
     HandleCommand,
@@ -7,7 +6,8 @@ import {
     Parameter,
     Secret,
     Secrets,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
+import { failure, Success } from "@atomist/automation-client/HandlerResult";
 import { editAll } from "@atomist/automation-client/operations/edit/editAll";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditResult, ProjectEditor, successfulEdit } from "@atomist/automation-client/operations/edit/projectEditor";

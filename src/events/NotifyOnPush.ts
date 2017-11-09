@@ -1,14 +1,14 @@
-import * as GraphQL from "@atomist/automation-client/graph/graphQL";
-import { Failure } from "@atomist/automation-client/HandlerResult";
 import {
     EventFired,
     EventHandler,
+    Failure,
     HandleEvent,
     HandlerContext,
     HandlerResult,
     Success,
     Tags,
-} from "@atomist/automation-client/Handlers";
+} from "@atomist/automation-client";
+import * as GraphQL from "@atomist/automation-client/graph/graphQL";
 import { logger } from "@atomist/automation-client/internal/util/logger";
 import * as _ from "lodash";
 import * as graphql from "../typings/types";

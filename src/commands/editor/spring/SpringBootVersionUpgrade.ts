@@ -1,5 +1,5 @@
+import { Secrets } from "@atomist/automation-client";
 import { CommandHandler, Parameter, Secret, Tags } from "@atomist/automation-client/decorators";
-import { Secrets } from "@atomist/automation-client/Handlers";
 import { hasFile } from "@atomist/automation-client/internal/util/gitHub";
 import { EditMode, PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { EditorCommandSupport } from "@atomist/automation-client/operations/edit/EditorCommandSupport";

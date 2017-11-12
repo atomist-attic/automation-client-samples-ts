@@ -25,9 +25,7 @@ describe("UpdateCopyrightEditor", () => {
 
     it("no comments for no matching artifact", done => {
         const project = InMemoryProject.of({ path: "README.md", content: SampleReadme });
-        const repoId: RepoId = new SimpleRepoId("a", "b");
 
-        // TODO: I don't know how to get it the in-memory project
         const result = editProject(project, null, { newYear: "2222" });
 
         result.then(er => {

@@ -8,6 +8,7 @@ import { VersionMapper } from "./commands/reviewer/maven/VersionMapper";
 import { VersionSpreadReviewer } from "./commands/reviewer/maven/VersionSpreadReviewer";
 import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
 import { SpringBootVersionReviewer } from "./commands/reviewer/spring/SpringBootVersionReviewer";
+import { HelloChannel } from "./commands/simple/HelloChannel";
 import { HelloWorld } from "./commands/simple/HelloWorld";
 import { CommentOnIssue } from "./events/CommentOnIssue";
 import { NotifyOnPush } from "./events/NotifyOnPush";
@@ -22,6 +23,7 @@ export const configuration: Configuration = {
     teamIds: ["T1JVCMVH7"], // <-- run @atomist pwd in your slack team to obtain the team id
     commands: [
         HelloWorld,
+        HelloChannel,
         SpringBootVersionReviewer,
         VersionSpreadReviewer,
         VersionMapper,

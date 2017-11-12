@@ -1,93 +1,90 @@
 import { CommandHandler, MappedParameter } from "@atomist/automation-client/decorators";
-import { UniversalSeed } from "@atomist/automation-client/operations/generate/UniversalSeed";
-import { Microgrammar } from "@atomist/microgrammar/Microgrammar";
-import { Alt, Opt } from "@atomist/microgrammar/Ops";
-import { RepSep } from "@atomist/microgrammar/Rep";
 
-import { MappedParameters } from "@atomist/automation-client";
+import {
+    HandleCommand, HandlerContext, HandlerResult, MappedParameters, Parameter, Secret,
+    Secrets, success,
+} from "@atomist/automation-client";
+import { defaultRepoLoader } from "@atomist/automation-client/operations/common/defaultRepoLoader";
+import { GitHubRepoRef } from "@atomist/automation-client/operations/common/GitHubRepoRef";
+import { RepoId, SimpleRepoId } from "@atomist/automation-client/operations/common/RepoId";
+import { generate } from "@atomist/automation-client/operations/generate/generatorUtils";
+import { GitHubProjectPersister } from "@atomist/automation-client/operations/generate/gitHubProjectPersister";
 import { Project } from "@atomist/automation-client/project/Project";
-import { doWithAtMostOneMatch, findMatches } from "@atomist/automation-client/project/util/parseUtils";
+import * as slack from "@atomist/slack-messages";
+
+const seedOwner = "atomist";
+const seedRepository = "automation-client-samples-ts";
+const seedProjectName = "@atomist/automation-client-samples";
 
 /**
  * Generator command to create a new node automation client repo
  */
 @CommandHandler("Create a new automation repo", "new automation")
-export class NewAutomation extends UniversalSeed {
+export class NewAutomation implements HandleCommand {
+
+    @MappedParameter(MappedParameters.GitHubOwner)
+    public owner: string;
+
+    @Parameter({})
+    public newRepository: string;
 
     @MappedParameter(MappedParameters.SlackTeam)
     public team: string;
 
-    constructor() {
-        super();
-        this.sourceOwner = "atomist";
-        this.sourceRepo = "automation-client-samples-ts";
-    }
+    @Secret(Secrets.UserToken)
+    private githubToken: string;
 
-    public manipulate(project: Project) {
-        return this.editPackageJson(project)
-            .then(editAtomistConfigTsToSetTeam(this.team));
-    }
+    public handle(context: HandlerContext, params: this): Promise<HandlerResult> {
 
-    protected editPackageJson(p: Project): Promise<Project> {
-        return doWithAtMostOneMatch<{ name: string }, Project>(p, "package.json", packageJsonNameGrammar, m => {
-            m.name = this.targetRepo;
-        });
+        const seedRepoRef = new GitHubRepoRef(seedOwner, seedRepository);
+        const newRepoRef = new GitHubRepoRef(params.owner, params.newRepository);
+
+        const seedProject = defaultRepoLoader( {token: params.githubToken })(seedRepoRef); // clone locally
+
+        return generate(seedProject, // the starting Project
+            context,
+            {token: params.githubToken}, // GitHub credentials
+            editProject(params), // function to change the Project
+            GitHubProjectPersister, // create a repo, please
+            newRepoRef) // new repository descriptor
+            .then(newProject => context.messageClient.respond(
+                "Great! Here is your new repository: " + slack.url(newRepoRef.url, params.newRepository)))
+            .then(success);
     }
 
 }
 
-function editAtomistConfigTsToSetTeam(...teamIds: string[]): (p: Project) => Promise<Project> {
-    return p => doWithAtMostOneMatch<{ teams: any }, Project>(p,
-        "src/atomist.config.ts", atomistConfigTeamNameGrammar, m => {
-            console.log(`Setting team: ${JSON.stringify(teamIds)}`);
-            m.teams = teamIds;
-        });
+export function editProject(params: { team: string, owner: string, newRepository: string }):
+(Project) => Promise<Project> {
+    return (project: Project) =>
+     editPackageJson(project, params)
+        .then(editAtomistConfigTsToSetTeam(params))
+         .then(alterReadme(params));
 }
 
-/*
-function editAtomistConfigTsToSetTeam(...teamIds: string[]): (p: Project) => Promise<Project> {
-    return p => findMatches<{ teams: any }>(p, "src/atomist.config.ts", atomistConfigTeamNameGrammar)
-        .then(m => {
-            if (m.length > 0) {
-                console.log(`Setting team: ${JSON.stringify(teamIds)}`);
-                m[0].teams = teamIds;
-            } else {
-                // how to modify a config that does not have a teamId?
-            }
-            return p;
-        });
-}
-*/
-
-export function teamMatchToArray(m: any): string[] {
-    if (!m.teams || m.teams === "null" || m.teams === "undefined") {
-        return [];
-    }
-    if (m.teams.team) {
-        return [m.teams.team];
-    }
-    return m.teams.teams.map(t => t.team);
+function editPackageJson(project: Project,
+                         params: { team: string, owner: string, newRepository: string }): Promise<Project> {
+    return project.findFile("package.json")
+        .then(file => file.replaceAll(seedProjectName, params.newRepository))
+        .then(file => file.replaceAll(seedRepository, params.newRepository))
+        .then(file => file.replaceAll(seedOwner, params.owner))
+        .then(() => project);
 }
 
-// "name": "@atomist/automation-client-samples",
-const packageJsonNameGrammar = Microgrammar.fromString<{ name: string }>(
-    '"name": "${name}"', {
-        name: /[^"]+/,
-    });
+function editAtomistConfigTsToSetTeam(params: { team: string }): (p: Project) => Promise<Project> {
+    return p =>
+        p.findFile("src/atomist.config.ts")
+        .then(file => file.replace(/teamIds:(.*),/m, `teamIds: ["${params.team}"]`))
+            .then(() => p);
+}
 
-const teamStringGrammar = Microgrammar.fromString<{ team: string }>(
-    '"${team}"', { team: /T[0-9A-Z]+/ },
-);
+function alterReadme(params: { newRepository: string }): (p: Project) => Promise<Project> {
+    return p =>
+        p.findFile("README.md")
+            .then(file => file.setContent(`# ${params.newRepository}
 
-const teamArrayGrammar = Microgrammar.fromDefinitions<{ teams: string[] }>({
-    _b1: "[",
-    teams: new RepSep(teamStringGrammar, ","),
-    _b2: "]",
-});
-
-// 'teamIds: "T1L0VDKJP"' or 'teamIds: ["T1L0VDKJP", "TEAM1", "TEAM2"]'
-export const atomistConfigTeamNameGrammar = Microgrammar.fromDefinitions<{ teams: any }>({
-    _teamKey: "teamIds:",
-    teams: new Alt("null", "undefined", teamStringGrammar, teamArrayGrammar),
-    _trailingComma: new Opt(","),
-});
+An Atomist [automation client](https://atomist.github.io/automation-client-ts/),
+based on some [samples](https://github.com/atomist/automation-client-samples-ts).
+`))
+            .then(() => p);
+}

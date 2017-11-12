@@ -7,45 +7,44 @@ import { InMemoryFile } from "@atomist/automation-client/project/mem/InMemoryFil
 import { InMemoryProject } from "@atomist/automation-client/project/mem/InMemoryProject";
 
 import {
-    atomistConfigTeamNameGrammar,
+    editProject,
     NewAutomation,
-    teamMatchToArray,
 } from "../../../src/commands/generator/NewAutomation";
 
 describe("NewAutomation", () => {
 
-    it("ignores irrelevant content without failing", done => {
+    it("fails on the wrong seed", done => {
         const files = [
             new InMemoryFile("a", "a"),
             new InMemoryFile("b", "a"),
             new InMemoryFile("c/d/e.txt", "a"),
         ];
         const project = InMemoryProject.of(...files);
-        const seed = new NewAutomation();
-        seed.manipulate(project)
-            .then(_ => {
-                assert(project.fileCount === files.length);
-                done();
-            }).catch(done);
+        editProject({team: "", owner: "", newRepository: ""})(project)
+            .then(() => done(new Error("This should have failed")))
+                .catch(err => done());
     });
 
-    it("edits this project", done => {
+    function thisProject(configContent: string = null) {
         const praw = new NodeFsLocalProject("test", appRoot.path);
-        const p = InMemoryProject.of(
+        return InMemoryProject.of(
             { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: praw.findFileSync("src/atomist.config.ts").getContentSync() },
+            { path: "src/atomist.config.ts",
+                content: configContent || praw.findFileSync("src/atomist.config.ts").getContentSync() },
+            { path: "README.md", content: praw.findFileSync("README.md").getContentSync() },
         );
-        const seed = new NewAutomation();
-        seed.targetRepo = "theTargetRepo";
-        seed.team = "T1000";
-        seed.manipulate(p)
+    }
+
+    it("edits this project", done => {
+        editProject({ team: "T1000", newRepository: "theTargetRepo", owner: "me" })(thisProject())
             .then(pr => {
                 const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
-                assert(newPackageJson.name === seed.targetRepo,
-                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+                assert(newPackageJson.name === "theTargetRepo",
+                    `Was [${newPackageJson.name}] expected ["theTargetRepo"]`);
 
                 const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
-                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                assert(newAtomistConfig.includes("T1000"), "Actual content was\n" + newAtomistConfig);
+                assert(pr.findFileSync("README.md").getContentSync().indexOf("theTargetRepo") > 0);
                 done();
             }).catch(done);
     });
@@ -59,22 +58,14 @@ describe("NewAutomation", () => {
         () => new HelloWorld(),
     ],
 }`;
-        const praw = new NodeFsLocalProject("test", appRoot.path);
-        const p = InMemoryProject.of(
-            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: config },
-        );
-        const seed = new NewAutomation();
-        seed.targetRepo = "theTargetRepo";
-        seed.team = "T1000";
-        seed.manipulate(p)
+        editProject({ team: "T1000", newRepository: "theTargetRepo", owner: "me" })(thisProject(config))
             .then(pr => {
                 const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
-                assert(newPackageJson.name === seed.targetRepo,
-                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+                assert(newPackageJson.name === "theTargetRepo",
+                    `Was [${newPackageJson.name}] expected ["theTargetRepo"]`);
 
                 const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
-                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                assert(newAtomistConfig.includes("T1000"), "Actual content was\n" + newAtomistConfig);
                 done();
             }).catch(done);
     });
@@ -88,22 +79,14 @@ describe("NewAutomation", () => {
         () => new HelloWorld(),
     ],
 };`;
-        const praw = new NodeFsLocalProject("test", appRoot.path);
-        const p = InMemoryProject.of(
-            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: config },
-        );
-        const seed = new NewAutomation();
-        seed.targetRepo = "theTargetRepo";
-        seed.team = "T1000";
-        seed.manipulate(p)
+        editProject({ team: "T1000", newRepository: "theTargetRepo", owner: "me" })(thisProject(config))
             .then(pr => {
                 const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
-                assert(newPackageJson.name === seed.targetRepo,
-                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+                assert(newPackageJson.name === "theTargetRepo",
+                    `Was [${newPackageJson.name}] expected ["theTargetRepo"]`);
 
                 const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
-                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                assert(newAtomistConfig.includes("T1000"), "Actual content was\n" + newAtomistConfig);
                 done();
             }).catch(done);
     });
@@ -117,22 +100,14 @@ describe("NewAutomation", () => {
         () => new HelloWorld(),
     ],
 }`;
-        const praw = new NodeFsLocalProject("test", appRoot.path);
-        const p = InMemoryProject.of(
-            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: config },
-        );
-        const seed = new NewAutomation();
-        seed.targetRepo = "theTargetRepo";
-        seed.team = "T1000";
-        seed.manipulate(p)
+        editProject({ team: "T1000", newRepository: "theTargetRepo", owner: "me" })(thisProject(config))
             .then(pr => {
                 const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
-                assert(newPackageJson.name === seed.targetRepo,
-                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+                assert(newPackageJson.name === "theTargetRepo",
+                    `Was [${newPackageJson.name}] expected [${"theTargetRepo"}]`);
 
                 const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
-                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                assert(newAtomistConfig.includes("T1000"), "Actual content was\n" + newAtomistConfig);
                 done();
             }).catch(done);
     });
@@ -146,89 +121,18 @@ describe("NewAutomation", () => {
         () => new HelloWorld(),
     ],
 }`;
-        const praw = new NodeFsLocalProject("test", appRoot.path);
-        const p = InMemoryProject.of(
-            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: config },
-        );
-        const seed = new NewAutomation();
-        seed.targetRepo = "theTargetRepo";
-        seed.team = "T1000";
-        seed.manipulate(p)
+        editProject({ team: "T1000", newRepository: "theTargetRepo", owner: "me" })(thisProject(config))
             .then(pr => {
                 const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
-                assert(newPackageJson.name === seed.targetRepo,
-                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
+                assert(newPackageJson.name === "theTargetRepo",
+                    `Was [${newPackageJson.name}] expected [${"theTargetRepo"}]`);
 
                 const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
-                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
+                assert(newAtomistConfig.includes("T1000"), "Actual content was\n" + newAtomistConfig);
                 done();
             }).catch(done);
     });
 
-    it("edits a config with no teamIds", /* done => {
-        const config = `export const configuration: Configuration = {
-    name: pj.name,
-    version: pj.version,
-    commands: [
-        () => new HelloWorld(),
-    ],
-}`;
-        const praw = new NodeFsLocalProject("test", appRoot.path);
-        const p = InMemoryProject.of(
-            { path: "package.json", content: praw.findFileSync("package.json").getContentSync() },
-            { path: "src/atomist.config.ts", content: config },
-        );
-        const seed = new NewAutomation();
-        seed.targetRepo = "theTargetRepo";
-        seed.team = "T1000";
-        seed.manipulate(p)
-            .then(pr => {
-                const newPackageJson = JSON.parse(pr.findFileSync("package.json").getContentSync());
-                assert(newPackageJson.name === seed.targetRepo,
-                    `Was [${newPackageJson.name}] expected [${seed.targetRepo}]`);
-
-                const newAtomistConfig = pr.findFileSync("src/atomist.config.ts").getContentSync();
-                assert(newAtomistConfig.includes(seed.team), "Actual content was\n" + newAtomistConfig);
-                done();
-            }).catch(done);
-    } */);
-
-});
-
-describe("atomist.config.ts microgrammar", () => {
-
-    it("should not match irrelevant gibberish", () => {
-        const thisIsALoadOfNonsense = "and then the clock struck 2";
-        assert(atomistConfigTeamNameGrammar.findMatches(thisIsALoadOfNonsense).length === 0);
-    });
-
-    it("should match actual content", () => {
-        const actualAtomistConfigTsFragment = `export const configuration: Configuration = {
-    name: pj.name,
-    version: pj.version,
-    teamIds: "T1L0VDKJP",
-    commands: [
-        () => new HelloWorld(),
-    ],
-}`;
-        const matches = atomistConfigTeamNameGrammar.findMatches(actualAtomistConfigTsFragment);
-        assert(matches.length === 1);
-        assert.deepEqual(teamMatchToArray(matches[0]), ["T1L0VDKJP"]);
-    });
-
-    it("should match content with teamIds array", () => {
-        const actualAtomistConfigTsFragment = `export const configuration: Configuration = {
-    name: pj.name,
-    version: pj.version,
-    teamIds: ["T1L0VDKJP", "TK421", "T100"],
-    commands: [
-        () => new HelloWorld(),
-    ],
-}`;
-        const matches = atomistConfigTeamNameGrammar.findMatches(actualAtomistConfigTsFragment);
-        assert(matches.length === 1);
-        assert.deepEqual(teamMatchToArray(matches[0]), ["T1L0VDKJP", "TK421", "T100"]);
-    });
+    it("edits a config with no teamIds");
 
 });

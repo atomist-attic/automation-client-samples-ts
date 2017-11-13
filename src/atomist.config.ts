@@ -9,10 +9,10 @@ import { VersionSpreadReviewer } from "./commands/reviewer/maven/VersionSpreadRe
 import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
 import { SpringBootVersionReviewer } from "./commands/reviewer/spring/SpringBootVersionReviewer";
 import { HelloChannel } from "./commands/simple/HelloChannel";
+import { HelloHttp } from "./commands/simple/HelloHttp";
 import { HelloWorld } from "./commands/simple/HelloWorld";
 import { CommentOnIssue } from "./events/CommentOnIssue";
 import { NotifyOnPush } from "./events/NotifyOnPush";
-import { HelloHttp } from "./commands/simple/HelloHttp";
 
 const pj = require(`${appRoot.path}/package.json`);
 

@@ -12,6 +12,7 @@ import { HelloChannel } from "./commands/simple/HelloChannel";
 import { HelloWorld } from "./commands/simple/HelloWorld";
 import { CommentOnIssue } from "./events/CommentOnIssue";
 import { NotifyOnPush } from "./events/NotifyOnPush";
+import { HelloHttp } from "./commands/simple/HelloHttp";
 
 const pj = require(`${appRoot.path}/package.json`);
 
@@ -24,6 +25,7 @@ export const configuration: Configuration = {
     commands: [
         HelloWorld,
         HelloChannel,
+        HelloHttp,
         SpringBootVersionReviewer,
         VersionSpreadReviewer,
         VersionMapper,

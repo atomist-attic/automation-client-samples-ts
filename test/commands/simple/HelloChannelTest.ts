@@ -33,7 +33,6 @@ describe("HelloChannel command handler", () => {
        subject.handle(fakeContext)
            .then(result => {
                // Do the assertions asynchronously
-               assert(result.code === 0);
                assert(fakeMessageClient.channelThatWasSent === "random");
            })
            .then(done, done); // tell the framework the test is complete, on both success and error

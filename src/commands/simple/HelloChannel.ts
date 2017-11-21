@@ -2,7 +2,6 @@ import {
     CommandHandler,
     HandleCommand,
     HandlerContext,
-    HandlerResult, success,
 } from "@atomist/automation-client";
 
 /**
@@ -18,9 +17,8 @@ import {
 @CommandHandler("Sends a message to #random", "marco")
 export class HelloChannel implements HandleCommand {
 
-    public handle(context: HandlerContext): Promise<HandlerResult> {
+    public handle(context: HandlerContext): Promise<void> {
 
-        return context.messageClient.addressChannels("polo", "random")
-            .then(success);
+        return context.messageClient.addressChannels("polo", "random");
     }
 }

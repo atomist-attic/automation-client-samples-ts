@@ -26,11 +26,11 @@ export function reviewProject(p: Project, context: HandlerContext): Promise<Proj
         .then(file => file.getContent())
         .then( (readme: string): ReviewComment => {
             if (goodCopyright.exec(readme)) {
-                return { severity: "info", comment: "up-to-date"};
+                return { severity: "info", detail: "up-to-date", category: "copyright"};
             } else if (otherCopyright.exec(readme)) {
-                return { severity: "warn", comment: "copyright is out of date"};
+                return { severity: "warn", detail: "copyright is out of date", category: "copyright"};
             } else {
-                return {severity: "error", comment: "no copyright detected"};
+                return {severity: "error", detail: "no copyright detected", category: "copyright"};
             }})
         .then((reviewComment: ReviewComment): ProjectReview =>
             ({repoId: p.id, comments: [reviewComment]}));
@@ -42,7 +42,7 @@ function report(reviews: ProjectReview[]): slack.SlackMessage {
         return {
             title: linkToRepo(review.repoId),
             fallback: "",
-            text: review.comments.map(c => toEmoji(c.severity) + " " + c.comment).join("\n"),
+            text: review.comments.map(c => toEmoji(c.severity) + " " + c.detail).join("\n"),
         };
     }
     const message: slack.SlackMessage = {

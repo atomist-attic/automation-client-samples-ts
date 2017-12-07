@@ -1,6 +1,9 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
-import { updateCopyrightInOneRepository } from "./commands/editor/UpdateCopyright";
+import {
+    updateCopyrightInArbitraryRepositories,
+    updateCopyrightInOneRepository,
+} from "./commands/editor/UpdateCopyright";
 import { NewAutomation } from "./commands/generator/NewAutomation";
 import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
 import { HelloChannel } from "./commands/simple/HelloChannel";
@@ -23,6 +26,7 @@ export const configuration: Configuration = {
         HelloHttp,
         NewAutomation,
         () => updateCopyrightInOneRepository(),
+        () => updateCopyrightInArbitraryRepositories(),
         // Use a factory if you like...
         () => new ReviewCopyright(),
     ],

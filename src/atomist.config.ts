@@ -2,8 +2,6 @@ import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
 import { UpdateCopyright } from "./commands/editor/UpdateCopyright";
 import { NewAutomation } from "./commands/generator/NewAutomation";
-import { VersionMapper } from "./commands/reviewer/maven/VersionMapper";
-import { VersionSpreadReviewer } from "./commands/reviewer/maven/VersionSpreadReviewer";
 import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
 import { HelloChannel } from "./commands/simple/HelloChannel";
 import { HelloHttp } from "./commands/simple/HelloHttp";
@@ -23,8 +21,6 @@ export const configuration: Configuration = {
         HelloWorld,
         HelloChannel,
         HelloHttp,
-        VersionSpreadReviewer,
-        VersionMapper,
         NewAutomation,
         UpdateCopyright,
         // Use a factory if you like...

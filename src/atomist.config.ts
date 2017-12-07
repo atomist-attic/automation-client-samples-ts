@@ -1,13 +1,10 @@
 import { Configuration } from "@atomist/automation-client/configuration";
 import * as appRoot from "app-root-path";
-import { SpringBootModernizer } from "./commands/editor/spring/SpringBootModernizer";
-import { SpringBootVersionUpgrade } from "./commands/editor/spring/SpringBootVersionUpgrade";
 import { UpdateCopyright } from "./commands/editor/UpdateCopyright";
 import { NewAutomation } from "./commands/generator/NewAutomation";
 import { VersionMapper } from "./commands/reviewer/maven/VersionMapper";
 import { VersionSpreadReviewer } from "./commands/reviewer/maven/VersionSpreadReviewer";
 import { ReviewCopyright } from "./commands/reviewer/ReviewCopyright";
-import { SpringBootVersionReviewer } from "./commands/reviewer/spring/SpringBootVersionReviewer";
 import { HelloChannel } from "./commands/simple/HelloChannel";
 import { HelloHttp } from "./commands/simple/HelloHttp";
 import { HelloWorld } from "./commands/simple/HelloWorld";
@@ -26,15 +23,12 @@ export const configuration: Configuration = {
         HelloWorld,
         HelloChannel,
         HelloHttp,
-        SpringBootVersionReviewer,
         VersionSpreadReviewer,
         VersionMapper,
         NewAutomation,
-        SpringBootModernizer,
         UpdateCopyright,
-        ReviewCopyright,
         // Use a factory if you like...
-        () => new SpringBootVersionUpgrade(),
+        () => new ReviewCopyright(),
     ],
     events: [
         () => new CommentOnIssue(),

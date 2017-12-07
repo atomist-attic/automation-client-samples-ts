@@ -1,11 +1,11 @@
 import { HandleCommand, Parameter } from "@atomist/automation-client";
 import { Parameters } from "@atomist/automation-client/decorators";
+import { AlwaysAskRepoParameters } from "@atomist/automation-client/operations/common/params/AlwaysAskRepoParameters";
 import { BaseEditorOrReviewerParameters } from "@atomist/automation-client/operations/common/params/BaseEditorOrReviewerParameters";
 import { MappedRepoParameters } from "@atomist/automation-client/operations/common/params/MappedRepoParameters";
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { Project } from "@atomist/automation-client/project/Project";
-import { AlwaysAskRepoParameters } from "@atomist/automation-client/operations/common/params/AlwaysAskRepoParameters";
 
 // First define a function to change the project
 export function updateCopyright(newYear: string) {

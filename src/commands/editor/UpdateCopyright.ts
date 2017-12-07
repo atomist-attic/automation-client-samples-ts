@@ -5,6 +5,7 @@ import { MappedRepoParameters } from "@atomist/automation-client/operations/comm
 import { PullRequest } from "@atomist/automation-client/operations/edit/editModes";
 import { editorHandler } from "@atomist/automation-client/operations/edit/editorToCommand";
 import { Project } from "@atomist/automation-client/project/Project";
+import { AlwaysAskRepoParameters } from "@atomist/automation-client/operations/common/params/AlwaysAskRepoParameters";
 
 // First define a function to change the project
 export function updateCopyright(newYear: string) {
@@ -31,6 +32,26 @@ export function updateCopyrightInOneRepository(): HandleCommand {
         UpdateCopyrightInOneRepositoryParameters,
         "Update Copyright in one repository", {
             intent: "update copyright",
+            editMode: new PullRequest("update-copyright-year", "Update the copyright"),
+        });
+}
+
+@Parameters()
+export class UpdateCopyrightInArbitraryRepositoriesParameters extends BaseEditorOrReviewerParameters {
+    @Parameter({ pattern: /^.*$/ })
+    public newYear: string;
+
+    constructor() {
+        super(new AlwaysAskRepoParameters());
+    }
+}
+
+export function updateCopyrightInArbitraryRepositories(): HandleCommand {
+    return editorHandler<UpdateCopyrightInArbitraryRepositoriesParameters>(
+        params => updateCopyright(params.newYear),
+        UpdateCopyrightInArbitraryRepositoriesParameters,
+        "Update Copyright in some repositories", {
+            intent: "update copyrights",
             editMode: new PullRequest("update-copyright-year", "Update the copyright"),
         });
 }

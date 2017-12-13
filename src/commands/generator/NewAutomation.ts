@@ -39,7 +39,7 @@ export class NewAutomation implements HandleCommand {
         const seedRepoRef = new GitHubRepoRef(seedOwner, seedRepository);
         const newRepoRef = new GitHubRepoRef(params.owner, params.newRepository);
 
-        const seedProject = defaultRepoLoader( {token: params.githubToken })(seedRepoRef); // clone locally
+        const seedProject = defaultRepoLoader(context,  {token: params.githubToken })(seedRepoRef); // clone locally
 
         return generate(seedProject, // the starting Project
             context,
